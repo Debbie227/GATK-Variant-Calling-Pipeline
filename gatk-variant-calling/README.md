@@ -40,5 +40,14 @@ curl -L -o mills_and_1000G.indels.vcf.gz.tbi \
 # Index reference genome
 cd ..
 pixi run bwa index reference/genome.fasta
+
+# Download test data for pipeline
+cd data
+curl -L -o test_1.fastq.gz \
+  https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/fastq/test_1.fastq.gz
+curl -L -o test_2.fastq.gz \
+  https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/fastq/test_2.fastq.gz
+
+cd ..
 ```
 
