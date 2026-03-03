@@ -1,5 +1,7 @@
 ## Building the GATK Variant Calling pipeline one command at a time in a Linux environment
 
+### Getting started
+
 A Variant Calling pipeline is...
 
 GATK is ...
@@ -21,8 +23,19 @@ The && allows for two commands to be run...
 The $_ uses the last argument...
 
 Other shortcuts include:
+using tab to autocomplete
+
+Moving back to the home folder
 cd
+
+Move up one directory
 cd ..
+cd ../..
+cd -
+ls -alh
+
+Create parent directories at the same time 
+mkdir -p chain/of/directories
 
 ### Download and install Pixi
 
@@ -50,6 +63,13 @@ pixi install
 ```
 
 Here is a breakdown of the pixi.toml file contents...
+
+[workspace]
+name = "gatk-variant-calling"
+version = "0.1.0"
+description = "GATK variant calling workflow with reproducible environment"
+channels = ["conda-forge", "bioconda"]
+platforms = ["linux-64"]
 
 ### Create a set of folders to put your data, reference genome, and results in
 
@@ -83,15 +103,28 @@ curl -L -o mills_and_1000G.indels.vcf.gz.tbi \
   https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/mills_and_1000G.indels.vcf.gz.tbi
 ```
 
+But wait! How do we choose a reference genome? What are the differences between genomes? ...
+
+
 ### Use BWA to index the reference genome
 
+What is BWA and what does indexing do? ...
+
 This command will give the following files:
+
+...
 
 ```bash
 # Index reference genome
 cd ..
 pixi run bwa index reference/genome.fasta
+```
 
+### Downloading our FASTQ data
+
+This test data from nf-core is a small set of human illumina reads that is small enough to work with on a free server, yet larrge enough to get meaningful results to look at.
+
+```bash
 # Download test data for pipeline
 cd data
 curl -L -o test_1.fastq.gz \
@@ -101,4 +134,4 @@ curl -L -o test_2.fastq.gz \
 
 cd ..
 ```
-
+## Now we are ready to begin part 2 - Taking our FASTQ reads and aligning them to the genome.
