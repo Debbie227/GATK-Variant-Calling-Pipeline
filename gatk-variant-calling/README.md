@@ -2,40 +2,21 @@
 
 ### Getting started
 
-A Variant Calling pipeline is...
+Variant Calling is the process to find and categorize differences in the genome of an individual. It is used in humans to find disease causing mutations in both somatic and germline samples.
 
 GATK is ...
-
-Creating this pipleine step by step allows the builder to troubleshoot and...
-
-Bioinformatics tools use the Linux command line...
+other algorithms include VarScan DRAGEN Deepvariant Sention
 
 This pipeline uses a Pixi environment to...
 
 ### First create a directory and move into that directory
-In the terminal type
+
+In the terminal type:
 
 ```bash
 mkdir gatk-variant-calling && cd $_
 ```
-Learning to be a Linux ninja takes learning shortcuts in typing commands
-The && allows for two commands to be run...
-The $_ uses the last argument...
-
-Other shortcuts include:
-using tab to autocomplete
-
-Moving back to the home folder
-cd
-
-Move up one directory
-cd ..
-cd ../..
-cd -
-ls -alh
-
-Create parent directories at the same time 
-mkdir -p chain/of/directories
+This creates the main folder for the project and moves into the directory in one line by using the last argument $_ from the previous command.
 
 ### Download and install Pixi
 
@@ -64,12 +45,33 @@ pixi install
 
 Here is a breakdown of the pixi.toml file contents...
 
+```toml
 [workspace]
 name = "gatk-variant-calling"
 version = "0.1.0"
 description = "GATK variant calling workflow with reproducible environment"
 channels = ["conda-forge", "bioconda"]
 platforms = ["linux-64"]
+
+[dependencies]
+```
+name
+- Anything you wish to name your project
+
+version
+- Version of your project for reproducibility
+
+description
+- Description of your project
+
+channels
+- Pixi automatically uses conda-forge to download dependencies. Any additional installer (such as bioconda) can be added here.
+- The pixi add command will use these channels to add more packages to your workflow
+
+[dependencies]
+- Any packages you wish to download and install for the project. When the project is initialized these will be added automatically with Pixi add.
+- The latest version can be added with PackageName = "*", but the project may not be reproducible from the toml file alone.
+
 
 ### Create a set of folders to put your data, reference genome, and results in
 
@@ -104,11 +106,14 @@ curl -L -o mills_and_1000G.indels.vcf.gz.tbi \
 ```
 
 But wait! How do we choose a reference genome? What are the differences between genomes? ...
-
+ hg19 or hg38
 
 ### Use BWA to index the reference genome
 
 What is BWA and what does indexing do? ...
+Used for short reads
+
+BWA vrs minimap2
 
 This command will give the following files:
 
