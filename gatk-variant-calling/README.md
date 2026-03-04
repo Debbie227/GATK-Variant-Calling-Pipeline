@@ -11,7 +11,7 @@ This pipeline uses a Pixi environment to...
 
 ### First create a directory and move into that directory
 
-In the terminal type:
+#### In the terminal type:
 
 ```bash
 mkdir gatk-variant-calling && cd $_
@@ -26,26 +26,9 @@ Different versions may not be compatible and may produce different results...
 
 Copy the pixi.toml file contents into your folder to ensure the same versions are used...
 
-The curl command will download pixi and install the program...
-
-Bashrc file in Linux is... 
-Source bashrc will allow the changes made to bashrc file to work....
-
-Pixi install uses the toml file to create a virtual envirnment...
-
-```bash
-# Define pixi environment and dependancies 
-touch pixi.toml
-
-curl -fsSL https://pixi.sh/install.sh | bash
-source ~/.bashrc
-
-pixi install
-```
-
 Here is a breakdown of the pixi.toml file contents...
 
-```toml
+```
 [workspace]
 name = "gatk-variant-calling"
 version = "0.1.0"
@@ -54,6 +37,7 @@ channels = ["conda-forge", "bioconda"]
 platforms = ["linux-64"]
 
 [dependencies]
+...
 ```
 name
 - Anything you wish to name your project
@@ -66,18 +50,50 @@ description
 
 channels
 - Pixi automatically uses conda-forge to download dependencies. Any additional installer (such as bioconda) can be added here.
-- The pixi add command will use these channels to add more packages to your workflow
+- If the pixi add command is used it will add packages to the workflow through one of the specified channels.
 
 [dependencies]
 - Any packages you wish to download and install for the project. When the project is initialized these will be added automatically with Pixi add.
 - The latest version can be added with PackageName = "*", but the project may not be reproducible from the toml file alone.
 
+#### To get Pixi and install the dependencies type the following commands in the terminal
+
+#### In the terminal type:
+
+```bash
+curl -fsSL https://pixi.sh/install.sh | bash
+source ~/.bashrc
+
+pixi install
+```
+
+The curl command will download pixi and install the program...
+
+Bashrc file in Linux is...
+
+*source bashrc* will refresh the bashrc that the current terminal is using.
+
+Pixi install uses the toml file to create a virtual envirnment with all the dependancies listed.
+
 
 ### Create a set of folders to put your data, reference genome, and results in
+
+#### In the terminal type:
 
 ```bash
 mkdir -p data reference results
 cd reference
+```
+Your file system should now have the following structure.
+
+```text
+gatk-variant-calling/
+├── pixi/
+├── data/
+├── reference/
+├── results/
+├── pixi.toml
+├── pixi.lock
 ```
 
 ### Download all reference data needed for this workflow
@@ -104,9 +120,36 @@ curl -L -o mills_and_1000G.indels.vcf.gz \
 curl -L -o mills_and_1000G.indels.vcf.gz.tbi \
   https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/mills_and_1000G.indels.vcf.gz.tbi
 ```
+#### Understanding the Reference Files
+
+**The reference genome includes:**
+
+genome.fasta
+
+- The actual DNA sequence.
+
+genome.fasta.fai
+
+- Index file used by samtools for random access.
+
+genome.dict
+
+- Sequence dictionary required by GATK to verify contig compatibility.
+
+**Known Variant Files (Used Later)**
+
+These files are used during Base Quality Score Recalibration:
+
+dbSNP (known SNPs)
+
+Mills + 1000G (known indels)
+
+They help GATK distinguish real biological variation from sequencing error.
 
 But wait! How do we choose a reference genome? What are the differences between genomes? ...
  hg19 or hg38
+
+How do I know which variant files to choose?
 
 ### Use BWA to index the reference genome
 
