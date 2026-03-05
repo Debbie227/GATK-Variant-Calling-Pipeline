@@ -1,0 +1,12 @@
+FROM ncbi/sra-tools:latest
+
+WORKDIR /data
+
+RUN prefetch SRR37153337
+
+RUN fasterq-dump SRR37153337 \
+    --split-files \
+    --maxSpotId 100000 \
+    --outdir /data
+
+CMD ["ls", "-lh"]
