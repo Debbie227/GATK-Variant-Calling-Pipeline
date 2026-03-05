@@ -1,0 +1,19 @@
+[Thu Mar  5 19:18:50 UTC 2026] Step 1: Running FastQC on raw reads...
+Skipping 'data/sample1_R1.fastq.gz' which didn't exist, or couldn't be read
+Skipping 'data/sample1_R2.fastq.gz' which didn't exist, or couldn't be read
+[Thu Mar  5 19:18:50 UTC 2026] FastQC completed
+[Thu Mar  5 19:18:50 UTC 2026] Step 2: Adapter trimming with Trim Galore...
+Multicore support not enabled. Proceeding with single-core trimming.
+Path to Cutadapt set as: 'cutadapt' (default)
+Cutadapt seems to be working fine (tested command 'cutadapt --version')
+Cutadapt version: 5.2
+single-core operation.
+igzip command line interface 2.31.1
+igzip detected. Using igzip for decompressing
+
+No quality encoding type selected. Assuming that the data provided uses Sanger encoded Phred scores (default)
+
+Output will be written into the directory: /workspaces/GATK-Variant-Calling-Pipeline/gatk-variant-pipeline/results/trimmed/sample1/
+igzip: Failed to open data/sample1_R1.fastq.gz : No such file or directory
+Input file 'data/sample1_R1.fastq.gz' seems to be completely empty. Consider respecifying!
+

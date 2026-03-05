@@ -81,8 +81,7 @@ Pixi install uses the toml file to create a virtual envirnment with all the depe
 #### In the terminal type:
 
 ```bash
-mkdir -p data reference results
-cd reference
+mkdir -p data reference results && cd reference
 ```
 Your file system should now have the following structure.
 

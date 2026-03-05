@@ -20,8 +20,19 @@ Check the results of the FASTQC to find problems with your data. A full walkthro
 
 You will see that this test data fails several quality checks for FASTQC
 
+In fact the read quality scores are too bad to trim with standard settings so I'm not sure if I should even continue with this data or start all over...Ugh
+
 ### Trimming reads
 
 ```bash
 
+```
+
+### BWA Alignment
+
+https://bio-bwa.sourceforge.net/bwa.shtml
+
+```bash
+cd results
+pixi run bwa mem reference/genome.fasta data/test_1.fastq.gz data/test_2.fastq.gz > test.sam
 ```
