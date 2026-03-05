@@ -170,7 +170,7 @@ pixi run bwa index reference/genome.fasta
 
 ### Downloading our FASTQ data
 
-This test data from nf-core is a small set of human illumina reads that is small enough to work with on a free server, yet larrge enough to get meaningful results to look at.
+This test data from nf-core is a small set of paired end human Illumina reads that is small enough to work with on a free server, yet large enough to get meaningful results to look at.
 
 ```bash
 # Download test data for pipeline
