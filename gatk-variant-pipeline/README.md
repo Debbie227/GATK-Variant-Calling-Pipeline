@@ -30,5 +30,11 @@ pixi run fasterq-dump SRR37153337 \
 docker build -t sra-download .
 
 # Same error
+
+pixi run prefetch SRR37153337 \
+    --max-size 41G
+
+# Too big for codespaces to deal with...
+
 ```
 
