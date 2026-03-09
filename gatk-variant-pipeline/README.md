@@ -96,3 +96,13 @@ pixi run fastp -i data/raw/SRR12023503_1.fastq -I data/raw/SRR12023503_2.fastq -
 
 # Out of memory in codespace...
 ```
+
+```bash
+# Run fastqc on the trimmed reads
+mkdir -p results/qc/trimmed
+
+pixi run fastqc data/trimmed/*.fastq -o results/qc/trimmed
+# Both samples failed to run
+# uk.ac.babraham.FastQC.Sequence.SequenceFormatException: Midline 'TGAGCTATGTGTCCCCAAGGATGAGGCTGCCATTTCTCTCCTGGGCTTTTC' didn't start with '+' at 33018019
+# uk.ac.babraham.FastQC.Sequence.SequenceFormatException: Ran out of data in the middle of a fastq entry.  Your file is probably truncated
+```
