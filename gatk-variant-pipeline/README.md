@@ -35,6 +35,56 @@ pixi run prefetch SRR37153337 \
     --max-size 41G
 
 # Too big for codespaces to deal with...
+# Time for a dataset that is smaller...
 
+# Found whole genome sequencing of Polish family chromosome 22
+pixi run fasterq-dump SRR12023503 --split-files
+# This command takes a long time to run. -p or --progress could have shown progress bar
+# Data size listed on SRA is 1.7GB. FASTQ-dump produced two 4.55GB fastq files - keep in mind for future downloads.
+```
+
+```bash
+# Download Chr 22 reference genome
+curl -L -o genome.fasta \
+  https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta
+curl -L -o genome.fasta.fai \
+  https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta.fai
+curl -L -o genome.dict \
+  https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.dict
+
+# Download known sites for BQSR
+
+    # Known snps from NCBI
+curl -L -o dbsnp_146.hg38.vcf.gz \
+  https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz
+curl -L -o dbsnp_146.hg38.vcf.gz.tbi \
+  https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz.tbi
+
+    # Known indels from 1000 genomes Project
+curl -L -o mills_and_1000G.indels.vcf.gz \
+  https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/mills_and_1000G.indels.vcf.gz
+curl -L -o mills_and_1000G.indels.vcf.gz.tbi \
+  https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/mills_and_1000G.indels.vcf.gz.tbi
+```
+
+```bash
+# Index reference genome
+cd ..
+pixi run bwa index reference/genome.fasta
+```
+
+```bash
+# Run FASTQC on raw files
+cd ../..
+mkdir -p results/qc/raw
+pixi run fastqc data/raw/*.fastq -o results/qc/raw
+```
+
+```python
+# In a new terminal check out the fastqc results
+python3 -m http.server 8000
+
+# Yay! These actually look like proper results!!
+# Needs some trimming
 ```
 
