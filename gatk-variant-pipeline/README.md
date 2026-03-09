@@ -81,10 +81,18 @@ pixi run fastqc data/raw/*.fastq -o results/qc/raw
 ```
 
 ```python
-# In a new terminal check out the fastqc results
+# In a new terminal check out the fastqc results using an http server
 python3 -m http.server 8000
 
 # Yay! These actually look like proper results!!
-# Needs some trimming
+# Needs some trimming on tail and some low quality scores
 ```
 
+```bash
+# Trimming with fastp default settings
+pixi run fastp -i data/raw/SRR12023503_1.fastq -I data/raw/SRR12023503_2.fastq -o data/trimmed/SRR12023503_1.fastq -O data/trimmed/SRR12023503_2.fastq
+
+# Should have saved output - copied to file
+
+# Out of memory in codespace...
+```
