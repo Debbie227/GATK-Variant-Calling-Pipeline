@@ -1,5 +1,7 @@
 ## Initial commands for GATK pipeline in codespaces
 
+## Initial commands for GATK pipeline in codespaces
+
 ```bash
 # Create directory and begin pixi environment
 mkdir gatk-variant-calling && cd $_
@@ -120,11 +122,4 @@ pixi run fastp -i data/raw/SRR12023503_1.fastq.gz -I data/raw/SRR12023503_2.fast
 
 pixi run fastqc data/trimmed/*.fastq.gz -o results/qc/trimmed
 # paired reads no longer have data below the 20 quality mark
-```
-
-```bash
-# Align the reads to the genome with bwa
-
-pixi run bwa mem reference/genome.fasta data/trimmed/SRR12023503_1.fastq.gz data/trimmed/SRR12023503_2.fastq.gz > results/aligned/SRR12023503.sam
-# This step is a good point for a lunch break...and maybe a walk...and a nap... It takes a very long time to align all these sequences.
 ```
