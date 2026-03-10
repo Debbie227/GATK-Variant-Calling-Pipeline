@@ -1,3 +1,5 @@
+## Initial commands for GATK pipeline in codespaces
+
 ```bash
 # Create directory and begin pixi environment
 mkdir gatk-variant-calling && cd $_
@@ -106,6 +108,23 @@ pixi run fastqc data/trimmed/*.fastq -o results/qc/trimmed
 # uk.ac.babraham.FastQC.Sequence.SequenceFormatException: Midline 'TGAGCTATGTGTCCCCAAGGATGAGGCTGCCATTTCTCTCCTGGGCTTTTC' didn't start with '+' at 33018019
 # uk.ac.babraham.FastQC.Sequence.SequenceFormatException: Ran out of data in the middle of a fastq entry.  Your file is probably truncated
 
-# Did I run out of room and not save the files correctly?
-pixi run fastp -i data/raw/SRR12023503_1.fastq -I data/raw/SRR12023503_2.fastq -o data/trimmed/SRR12023503_1.fastq.gz -O data/trimmed/SRR12023503_2.fastq.gz
+# Did I run out of room and not save the files correctly? Zip input and output files to save space and deleted files from other pipeline.
+cd data/raw
+gzip SRR12023503_1.fastq SRR12023503_2.fastq 
+# This takes a very long time but the files are now 1.06GB
+
+cd ../..
+
+pixi run fastp -i data/raw/SRR12023503_1.fastq.gz -I data/raw/SRR12023503_2.fastq.gz -o data/trimmed/SRR12023503_1.fastq.gz -O data/trimmed/SRR12023503_2.fastq.gz
+# fastp.html and fasp.json were properly made this time
+
+pixi run fastqc data/trimmed/*.fastq.gz -o results/qc/trimmed
+# paired reads no longer have data below the 20 quality mark
+```
+
+```bash
+# Align the reads to the genome with bwa
+
+pixi run bwa mem reference/genome.fasta data/trimmed/SRR12023503_1.fastq.gz data/trimmed/SRR12023503_2.fastq.gz > results/aligned/SRR12023503.sam
+# This step is a good point for a lunch break...and maybe a walk...and a nap... It takes a very long time to align all these sequences.
 ```
