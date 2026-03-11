@@ -143,10 +143,18 @@ pixi run bwa mem -t 8 reference/genome.fasta data/trimmed/SRR12023503_1.fastq.gz
  | pixi run samtools sort -@8 -o results/aligned/SRR12023503.bam - \
  && pixi run samtools index results/aligned/SRR12023503.bam
 
-pixi run bwa mem -t 8 reference/genome.fasta \
-  data/trimmed/SRR12023503_1.fastq.gz \
-  data/trimmed/SRR12023503_2.fastq.gz \
-| pixi run samtools sort -@ 8 -o results/aligned/SRR12023503.bam -
+ # Ran mem for several hours with no output
+
+ pixi run bwa mem reference/genome.fasta data/trimmed/SRR12023503_1.fastq.gz data/trimmed/SRR12023503_2.fastq.gz \
+ > results/aligned/SRR12023503.sam
+
+ # produced sam file
+ 
+ pixi run samtools view -Sb results/aligned/SRR12023503.sam > results/aligned/SRR12023503.bam
+ # error: [E::aux_parse] Incomplete aux field
+
+ # Starting pipeline from beginning since several steps ran into memory errors
+
 
  # Because I'm piping multiple command together problems may arise. If one command fails the pipe may still partially run. Use "set -euo pipefail" at the top of a script to stop the script from continuing after a fail. -e exit if command fails -u fail on unidentified variables
 ```
