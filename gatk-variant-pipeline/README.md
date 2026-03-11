@@ -1,7 +1,5 @@
 ## Initial commands for GATK pipeline in codespaces
 
-## Initial commands for GATK pipeline in codespaces
-
 ```bash
 # Create directory and begin pixi environment
 mkdir gatk-variant-calling && cd $_
@@ -94,7 +92,8 @@ python3 -m http.server 8000
 
 ```bash
 # Trimming with fastp default settings
-pixi run fastp -i data/raw/SRR12023503_1.fastq -I data/raw/SRR12023503_2.fastq -o data/trimmed/SRR12023503_1.fastq -O data/trimmed/SRR12023503_2.fastq
+pixi run fastp -i data/raw/SRR12023503_1.fastq -I data/raw/SRR12023503_2.fastq \
+  -o data/trimmed/SRR12023503_1.fastq -O data/trimmed/SRR12023503_2.fastq
 
 # Should have saved output - copied to file
 
@@ -117,7 +116,9 @@ gzip SRR12023503_1.fastq SRR12023503_2.fastq
 
 cd ../..
 
-pixi run fastp -i data/raw/SRR12023503_1.fastq.gz -I data/raw/SRR12023503_2.fastq.gz -o data/trimmed/SRR12023503_1.fastq.gz -O data/trimmed/SRR12023503_2.fastq.gz
+pixi run fastp -i data/raw/SRR12023503_1.fastq.gz -I data/raw/SRR12023503_2.fastq.gz \
+ -o data/trimmed/SRR12023503_1.fastq.gz -O data/trimmed/SRR12023503_2.fastq.gz
+
 # fastp.html and fasp.json were properly made this time
 
 pixi run fastqc data/trimmed/*.fastq.gz -o results/qc/trimmed
@@ -127,10 +128,22 @@ pixi run fastqc data/trimmed/*.fastq.gz -o results/qc/trimmed
 ```bash
 # Align the reads to the genome with bwa
 
-pixi run bwa mem reference/genome.fasta data/trimmed/SRR12023503_1.fastq.gz data/trimmed/SRR12023503_2.fastq.gz > results/aligned/SRR12023503.sam
+pixi run bwa mem reference/genome.fasta data/trimmed/SRR12023503_1.fastq.gz data/trimmed/SRR12023503_2.fastq.gz \
+ > results/aligned/SRR12023503.sam
+
 # This step is a good point for a lunch break...and maybe a walk...and a nap... It takes a very long time to align all these sequences.
 # The sam file is quite large - next time pipe directly to bam to not take up the space. | samtools sort -o SRR12023503.bam
 
+# Apparently I committed part of the sam file somehow despite adding it to the gitignore and caused a huge mess...
+# In the process of fixing it I deleted the entire sam file. Lets re-run the alignment straight to sorted bam using 8 threads to spped up the process and keep the file size down!
 
-# Next step sam -> bam
+pixi run bwa mem -t 8 reference/genome.fasta data/trimmed/SRR12023503_1.fastq.gz data/trimmed/SRR12023503_2.fastq.gz \
+ | pixi run samtools sort -@8 -o results/aligned/SRR12023503.bam - \
+ && pixi run samtools index results/aligned/SRR12023503.bam
+
+ # Because I'm piping multiple command together problems may arise. If one command fails the pipe may still partially run. Use "set -euo pipefail" at the top of a script to stop the script from continuing after a fail. -e exit if command fails -u fail on unidentified variables
+```
+```bash
+# Check alignment rate, coverage depth, mapping quality, duplicate rate, insert size distribution
+# Next step GATK duplicates
 ```
