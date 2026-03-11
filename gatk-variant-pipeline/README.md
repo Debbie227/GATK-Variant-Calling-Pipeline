@@ -131,5 +131,6 @@ pixi run bwa mem reference/genome.fasta data/trimmed/SRR12023503_1.fastq.gz data
 # This step is a good point for a lunch break...and maybe a walk...and a nap... It takes a very long time to align all these sequences.
 # The sam file is quite large - next time pipe directly to bam to not take up the space. | samtools sort -o SRR12023503.bam
 
+
 # Next step sam -> bam
 ```

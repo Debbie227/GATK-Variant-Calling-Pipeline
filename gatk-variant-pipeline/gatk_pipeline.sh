@@ -2,7 +2,7 @@
 #
 # GATK Variant Calling Pipeline - Complete Best Practices (16 Steps)
 # Following GATK Option 2: GVCF mode + hard filtering
-# Written by Giang Nguyen
+#
 
 set -euo pipefail
 
