@@ -6,4 +6,4 @@
 *.sra*
 *.fastq
 *.sam
-gatk-variant-pipeline/results/aligned/SRR12023503.sam
+
