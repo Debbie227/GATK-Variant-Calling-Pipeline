@@ -6,4 +6,4 @@
 *.sra*
 *.fastq
 *.sam
-
+*.gz

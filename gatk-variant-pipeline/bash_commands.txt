@@ -263,7 +263,46 @@ zcat data/trimmed/match_SRR12023503_1.fastq.gz | head -4
 
 # Since all the large files at the beginning were deleted lets start all over again \o/
 # This time try trim galore and check headers before moving on...
-```
+
+cat SRR12023503_1.fastq | head -8
+
+# nope fastp didn't change the headers. They come @SRR12023503.1 1 length=101 in both files.
+
+pixi run trim_galore \
+    --paired \           # Indicates we have paired-end reads (R1 and R2)
+    --quality 20 \       # Remove bases with quality score < 20
+    --length 50 \        # Discard reads shorter than 50bp after trimming
+    --output_dir data/trimmed/ \
+    data/raw/SRR12023503_1.fastq.gz \
+    data/raw/SRR12023503_2.fastq.gz
+
+# ended with error: Read 2 output is truncated at sequence count: 18723539, please check your paired-end input files! Terminating...
+# Lets run a quality check on paired files first then re-run trim galore
+
+pixi run fastq_filterpair \
+    data/raw/SRR12023503_1.fastq.gz data/raw/SRR12023503_2.fastq.gz \
+    data/raw/match_SRR12023503_1.fastq.gz data/raw/match_SRR12023503_2.fastq.gz \
+    data/raw/SRR12023503_single.fastq.gz
+
+# Found 188126 unpaired reads
+
+pixi run fastqc data/raw/match*.fastq.gz -o results/qc/raw
+
+# QC looks about the same as original
+
+pixi run trim_galore \
+    --paired \
+    --quality 20 \
+    --length 50 \
+    --fastqc \
+    --fastqc_args "--outdir results/qc/trimmed/" \
+    --output_dir data/trimmed/ \
+    data/raw/match_SRR12023503_1.fastq.gz \
+    data/raw/match_SRR12023503_2.fastq.gz
+
+# No errors this time!
+# QC looks good. per base sequence count is the only thing that failed.
+# Time to align again
 
 ```bash
 # Next step Base Quality Score Recalibration (BQSR)

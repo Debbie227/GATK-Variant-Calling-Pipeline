@@ -66,11 +66,17 @@ curl -L -o mills_and_1000G.indels.vcf.gz.tbi \
 pixi run bwa index reference/genome.fasta
 ```
 ### QC and trim data
-
+```bash
+# ensure paired ends match and remove unmatched pairs
+pixi run fastq_filterpair \
+    data/raw/SRR12023503_1.fastq.gz data/raw/SRR12023503_2.fastq.gz \
+    data/raw/match_SRR12023503_1.fastq.gz data/raw/match_SRR12023503_2.fastq.gz \
+    data/raw/SRR12023503_single.fastq.gz
+```
 ```bash
 # Run FASTQC on raw files
 mkdir -p results/qc/raw
-pixi run fastqc data/raw/*.fastq.gz -o results/qc/raw
+pixi run fastqc data/raw/match*.fastq.gz -o results/qc/raw
 ```
 
 ```python
@@ -79,12 +85,18 @@ python3 -m http.server 8000
 ```
 
 ```bash
-# Trimming with fastp default settings
-pixi run fastp -i data/raw/SRR12023503_1.fastq.gz -I data/raw/SRR12023503_2.fastq.gz \
- -o data/trimmed/SRR12023503_1.fastq.gz -O data/trimmed/SRR12023503_2.fastq.gz
+# Trimming with trim galore
+pixi run trim_galore \
+    --paired \
+    --quality 20 \
+    --length 50 \
+    --fastqc \
+    --fastqc_args "--outdir results/qc/trimmed/" \
+    --output_dir data/trimmed/ \
+    data/raw/match_SRR12023503_1.fastq.gz \
+    data/raw/match_SRR12023503_2.fastq.gz
 
-# Run QC on trimmed reads
-pixi run fastqc data/trimmed/*.fastq.gz -o results/qc/trimmed
+# Check QC on trimmed reads
 ```
 ### Align genome and create bam files
 ```bash
@@ -93,10 +105,11 @@ pixi run fastqc data/trimmed/*.fastq.gz -o results/qc/trimmed
 pixi run bwa mem \
     -t $8 \
     -M \
+    -p \
     -R "@RG\tID:SRR12023503\tSM:SRR12023503\tPL:ILLUMINA\tLB:SRR12023503_lib" \
     reference/genome.fasta \
-    data/trimmed/SRR12023503_1.fastq.gz \
-    data/trimmed/SRR12023503_2.fastq.gz \
+    data/trimmed/match_SRR12023503_1_val_1.fq.gz \
+    data/trimmed/match_SRR12023503_2_val_2.fq.gz \
     > results/aligned/SRR12023503.sam
 
 # Convert the sam file to sorted bam
