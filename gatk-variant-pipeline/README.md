@@ -112,6 +112,19 @@ pixi run samtools index results/aligned/SRR12023503.bam
 ### Check alignment quality and coverage
 ```bash
 # Check alignment rate, coverage depth, mapping quality, duplicate rate, insert size distribution
+pixi run samtools flagstat results/aligned/SRR12023503.bam > results/qc/trimmed/SRR12023503_align_stats.txt
 
-# Next step GATK duplicates
+pixi run samtools depth results/aligned/SRR12023503.bam -o results/qc/trimmed/SRR12023503_depth.txt
+
+pixi run gatk MarkDuplicates \
+    -I results/aligned/SRR12023503.bam \
+    -O results/aligned/SRR12023503_marked_duplicates.bam \
+    -M results/aligned/SRR12023503_duplicate_metrics.txt \
+    --CREATE_INDEX true
+
+pixi run picard CollectInsertSizeMetrics \
+    -I results/aligned/SRR12023503.bam \
+    -O results/qc/trimmed/SRR12023503_insert_size_metrics.txt \
+    -H results/qc/trimmed/SRR12023503_insert_size_histogram.pdf \
+    -M 0.5
 ```

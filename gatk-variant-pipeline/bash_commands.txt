@@ -193,26 +193,27 @@ pixi run samtools index results/aligned/SRR12023503.bam
 ```bash
 # Check alignment rate, coverage depth, mapping quality, duplicate rate, insert size distribution
 
-pixi run samtools flagstat SRR12023503.bam > results/qc/trimmed/SRR12023503_align_stats.txt # alignment rate. For WGS should be 95%+ for exome should be 90%+
+pixi run samtools flagstat results/aligned/SRR12023503.bam > results/qc/trimmed/SRR12023503_align_stats.txt # alignment rate. For WGS should be 95%+ for exome should be 90%+
 # What is it? https://samtools.org/what-information-does-samtools-flagstat-provide/
 
-pixi run samtools depth SRR12023503.bam -o results/qc/trimmed/SRR12023503_depth.txt # coverage depth or use mosdepth, qualimap. Should be 30x wgs or 80+ for exome.
+pixi run samtools depth results/aligned/SRR12023503.bam -o results/qc/trimmed/SRR12023503_depth.txt # coverage depth or use mosdepth, qualimap. Should be 30x wgs or 80+ for exome.
 # What is it? https://samtools.org/what-does-the-samtools-depth-command-tell-us/
 
 # Duplicates should be less than 30. Can use picard MarkDuplicates
-gatk MarkDuplicates \
+pixi run gatk MarkDuplicates \
     -I results/aligned/SRR12023503.bam \
     -O results/aligned/SRR12023503_marked_duplicates.bam \
     -M results/aligned/SRR12023503_duplicate_metrics.txt \  # File containing duplication statistics
     --CREATE_INDEX true  # Automatically create BAM index
 
 # insert size duplication use picard or qualimap. Size should be ~300
-picard CollectInsertSizeMetrics \
+pixi run picard CollectInsertSizeMetrics \
       I=results/aligned/SRR12023503.bam \
       O=results/qc/trimmed/SRR12023503_insert_size_metrics.txt \
       H=results/qc/trimmed/SRR12023503_insert_size_histogram.pdf \
       M=0.5
 # What is it? https://gatk.broadinstitute.org/hc/en-us/articles/21905022322587-CollectInsertSizeMetrics-Picard
+# error: All data categories were discarded because they contained < 0.5 of the total aligned paired data.
 ```
 
 ```bash
