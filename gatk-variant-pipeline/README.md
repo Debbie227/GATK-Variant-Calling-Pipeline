@@ -103,7 +103,7 @@ pixi run bwa mem \
     > results/aligned/SRR12023503.sam
 
 # Convert the sam file to sorted bam
-pixi run samtools sort -@ 8 results/aligned/SRR12023503.sam -o results/aligned/SRR12023503.bam
+pixi run samtools sort results/aligned/SRR12023503.sam -o results/aligned/SRR12023503.bam
 
 # Index the bam file
 pixi run samtools index results/aligned/SRR12023503.bam

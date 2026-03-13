@@ -170,7 +170,22 @@ pixi run bwa mem \
 
 pixi run samtools sort -@ 8 results/aligned/SRR12023503.sam -o results/aligned/SRR12023503.bam
 
+# Command gave no output and no errors
+
+pixi run samtools view -Sb results/aligned/SRR12023503.sam > results/aligned/unsort_SRR12023503.bam
+
+# This worked but I'm running out of room again...
+
+pixi run samtools sort results/aligned/unsort_SRR12023503.bam -o results/aligned/SRR12023503.bam
+
+# This looks like it's working but I ran out of room - the problem may be the 8 threads - deleting unsorted bam and trying the sam to sorted bam again
+# Deleted raw fastq data to make more room for the sorted bam file
+
+pixi run samtools sort results/aligned/SRR12023503.sam -o results/aligned/SRR12023503.bam
+
 pixi run samtools index results/aligned/SRR12023503.bam
+
+# Happy dance time!!! After three days of troubleshooting I finally have a bam and bai file!!!!
 
  # If I'm piping multiple command together problems may arise. If one command fails the pipe may still partially run. Use "set -euo pipefail" 
  # at the top of a script to stop the script from continuing after a fail. -e exit if command fails -u fail on unidentified variables
