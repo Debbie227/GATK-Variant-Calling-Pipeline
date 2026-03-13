@@ -1,4 +1,4 @@
-## Initial commands for GATK pipeline in codespaces
+## Initial commands for GATK pipeline in codespaces and notes on runs and commands
 
 ```bash
 # Create directory and begin pixi environment
@@ -143,22 +143,64 @@ pixi run bwa mem -t 8 reference/genome.fasta data/trimmed/SRR12023503_1.fastq.gz
  | pixi run samtools sort -@8 -o results/aligned/SRR12023503.bam - \
  && pixi run samtools index results/aligned/SRR12023503.bam
 
- # Ran mem for several hours with no output
+ # Ran bwa mem for several hours with no output
 
  pixi run bwa mem reference/genome.fasta data/trimmed/SRR12023503_1.fastq.gz data/trimmed/SRR12023503_2.fastq.gz \
  > results/aligned/SRR12023503.sam
 
- # produced sam file
+ # produced sam file - Thinking back I think it took about a third of the time of the first run
  
  pixi run samtools view -Sb results/aligned/SRR12023503.sam > results/aligned/SRR12023503.bam
- # error: [E::aux_parse] Incomplete aux field
+ # error: [E::aux_parse] Incomplete aux field - Did it time out when my screen went to sleep?
 
- # Starting pipeline from beginning since several steps ran into memory errors
+ # Starting pipeline from beginning since several steps ran into memory errors and there was weird incomplete fields
+ # alignment + bam + bai still did not have output with piping and && commands
 
+pixi run bwa mem \
+    -t $8 \     # Use multiple CPU threads for faster processing
+    -M \                # Mark shorter split hits as secondary (required for Picard compatibility)
+    -R "@RG\tID:SRR12023503\tSM:SRR12023503\tPL:ILLUMINA\tLB:SRR12023503_lib" \  # Read group info (required for GATK)
+    reference/genome.fasta \      # Reference genome file
+    data/trimmed/SRR12023503_1.fastq.gz \  # Trimmed forward reads
+    data/trimmed/SRR12023503_2.fastq.gz \  # Trimmed reverse reads
+    | pixi run samtools sort -@ $8 -o results/aligned/SRR12023503.bam  # Sort reads by position
 
- # Because I'm piping multiple command together problems may arise. If one command fails the pipe may still partially run. Use "set -euo pipefail" at the top of a script to stop the script from continuing after a fail. -e exit if command fails -u fail on unidentified variables
+# samtools sort getting error that the bam file doesn't exist...of course it doesn't? I'm trying to create it. Problem with using pixi run?
+# ran command without the final pipe and output redirected to > results/aligned/SRR12023503.sam
+
+pixi run samtools sort -@ 8 results/aligned/SRR12023503.sam -o results/aligned/SRR12023503.bam
+
+pixi run samtools index results/aligned/SRR12023503.bam
+
+ # If I'm piping multiple command together problems may arise. If one command fails the pipe may still partially run. Use "set -euo pipefail" 
+ # at the top of a script to stop the script from continuing after a fail. -e exit if command fails -u fail on unidentified variables
 ```
 ```bash
 # Check alignment rate, coverage depth, mapping quality, duplicate rate, insert size distribution
-# Next step GATK duplicates
+
+pixi run samtools flagstat SRR12023503.bam > results/qc/trimmed/SRR12023503_align_stats.txt # alignment rate. For WGS should be 95%+ for exome should be 90%+
+# What is it? https://samtools.org/what-information-does-samtools-flagstat-provide/
+
+pixi run samtools depth SRR12023503.bam -o results/qc/trimmed/SRR12023503_depth.txt # coverage depth or use mosdepth, qualimap. Should be 30x wgs or 80+ for exome.
+# What is it? https://samtools.org/what-does-the-samtools-depth-command-tell-us/
+
+# Duplicates should be less than 30. Can use picard MarkDuplicates
+gatk MarkDuplicates \
+    -I results/aligned/SRR12023503.bam \
+    -O results/aligned/SRR12023503_marked_duplicates.bam \
+    -M results/aligned/SRR12023503_duplicate_metrics.txt \  # File containing duplication statistics
+    --CREATE_INDEX true  # Automatically create BAM index
+
+# insert size duplication use picard or qualimap. Size should be ~300
+picard CollectInsertSizeMetrics \
+      I=results/aligned/SRR12023503.bam \
+      O=results/qc/trimmed/SRR12023503_insert_size_metrics.txt \
+      H=results/qc/trimmed/SRR12023503_insert_size_histogram.pdf \
+      M=0.5
+# What is it? https://gatk.broadinstitute.org/hc/en-us/articles/21905022322587-CollectInsertSizeMetrics-Picard
+```
+
+```bash
+# Next step Base Quality Score Recalibration (BQSR)
+# What is it? https://gatk.broadinstitute.org/hc/en-us/articles/360035890531-Base-Quality-Score-Recalibration-BQSR
 ```

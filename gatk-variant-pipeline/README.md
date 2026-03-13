@@ -93,13 +93,25 @@ pixi run fastqc data/trimmed/*.fastq.gz -o results/qc/trimmed
 pixi run bwa mem reference/genome.fasta data/trimmed/SRR12023503_1.fastq.gz data/trimmed/SRR12023503_2.fastq.gz \
  > results/aligned/SRR12023503.sam
 
-# Try alignment and bam file creating in one step
-pixi run bwa mem -t 8 reference/genome.fasta data/trimmed/SRR12023503_1.fastq.gz data/trimmed/SRR12023503_2.fastq.gz \
- | pixi run samtools sort -@8 -o results/aligned/SRR12023503.bam - \
- && pixi run samtools index results/aligned/SRR12023503.bam
+pixi run bwa mem \
+    -t $8 \
+    -M \
+    -R "@RG\tID:SRR12023503\tSM:SRR12023503\tPL:ILLUMINA\tLB:SRR12023503_lib" \
+    reference/genome.fasta \
+    data/trimmed/SRR12023503_1.fastq.gz \
+    data/trimmed/SRR12023503_2.fastq.gz \
+    > results/aligned/SRR12023503.sam
 
+# Convert the sam file to sorted bam
+pixi run samtools sort -@ 8 results/aligned/SRR12023503.sam -o results/aligned/SRR12023503.bam
+
+# Index the bam file
+pixi run samtools index results/aligned/SRR12023503.bam
 ```
+
+### Check alignment quality and coverage
 ```bash
 # Check alignment rate, coverage depth, mapping quality, duplicate rate, insert size distribution
+
 # Next step GATK duplicates
 ```
