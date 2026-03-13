@@ -22,6 +22,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/cairo-1.18.4-h3394656_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/curl-8.18.0-hcf29cc6_1.conda
       - conda: https://conda.anaconda.org/bioconda/linux-64/fastp-1.1.0-heae3180_0.conda
+      - conda: https://conda.anaconda.org/bioconda/linux-64/fastq_utils-0.25.3-ha9dfd29_0.tar.bz2
       - conda: https://conda.anaconda.org/bioconda/noarch/fastqc-0.12.1-hdfd78af_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/noarch/font-ttf-dejavu-sans-mono-2.37-hab24e00_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/noarch/font-ttf-inconsolata-3.000-h77eed37_0.tar.bz2
@@ -323,6 +324,20 @@ packages:
   license_family: MIT
   size: 240830
   timestamp: 1769261565731
+- conda: https://conda.anaconda.org/bioconda/linux-64/fastq_utils-0.25.3-ha9dfd29_0.tar.bz2
+  sha256: 50fcece343e914fe0e8d99255a9ed518abd0bac29c25aad4c47cd035e0dace3b
+  md5: 46c617123bff6d25e5b3f9328bc0b99c
+  depends:
+  - bzip2 >=1.0.8,<2.0a0
+  - libgcc >=13
+  - liblzma >=5.8.1,<6.0a0
+  - libzlib >=1.2.13,<2.0a0
+  - ncurses >=6.5,<7.0a0
+  - samtools
+  license: GPL-3.0-only
+  license_family: GPL3
+  size: 572428
+  timestamp: 1750285193425
 - conda: https://conda.anaconda.org/bioconda/noarch/fastqc-0.12.1-hdfd78af_0.tar.bz2
   sha256: 7cc26225d590540ae95cd24940ff42f2da7479dd4cd22ae9ab9298665d06790c
   md5: c9f6a4b12229f7331f79c9a00dd6e240

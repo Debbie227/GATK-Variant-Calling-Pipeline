@@ -214,6 +214,55 @@ pixi run picard CollectInsertSizeMetrics \
       M=0.5
 # What is it? https://gatk.broadinstitute.org/hc/en-us/articles/21905022322587-CollectInsertSizeMetrics-Picard
 # error: All data categories were discarded because they contained < 0.5 of the total aligned paired data.
+
+# coverage I think looks great? But properly paired is only 4%??? Properly mapped is only 11%?
+
+# Lets check the trimmed files that are left to see why they aren't paired?
+# Fastq-paired only works on non-zip files - validatefastq gives metrics
+# picard and validatefastq are not compatible -need different versions of jdk
+# fastq_utils has fastq_filterpair to sort and pair the files
+
+pixi run fastq_filterpair \
+    data/trimmed/SRR12023503_1.fastq.gz data/trimmed/SRR12023503_2.fastq.gz \
+    data/trimmed/match_SRR12023503_1.fastq.gz data/trimmed/match_SRR12023503_2.fastq.gz \
+    data/trimmed/SRR12023503_single.fastq.gz
+
+# ran out of room again...deleted mark duplicates files to make room
+
+# Files had many unpaired reads. Don't know if this was an issue with trimming or original file?? Now have almost 17mil paired reads.
+# Recording 163437 unpaired reads from data/trimmed/SRR12023503_1.fastq.gz
+# 100000Unpaired from data/trimmed/SRR12023503_1.fastq.gz: 163437
+# Unpaired from data/trimmed/SRR12023503_2.fastq.gz: 163437
+# Paired: 16829740
+
+
+# This means I'm going to have to re-align the genome. Again.
+# I guess I'll continue to assume that the chr 22 genome I have is hg38 and correct...I don't have space to download the human genome.
+
+pixi run bwa mem \
+    -M \
+    -R "@RG\tID:SRR12023503\tSM:SRR12023503\tPL:ILLUMINA\tLB:SRR12023503_lib" \
+    reference/genome.fasta \
+    data/trimmed/match_SRR12023503_1.fastq.gz \
+    data/trimmed/match_SRR12023503_2.fastq.gz \
+    > results/aligned/SRR12023503.sam
+
+#start 1:08pm
+# Still lots of "skip orientation as there are not enough pairs" messages
+# might be normal to have that? 
+
+zcat data/trimmed/match_SRR12023503_1.fastq.gz | head -4
+
+# @SRR12023503.1 1 length=101
+# TGGGGTCTTGGTCCAGAAGGCCAATCTCCTGGCAGCCCACGCAGCACGTTCGAGAAATCTCACTTGTGGCGGGGTTCCAAACTGTTTCCATGCAGCCCCTT
+# +SRR12023503.1 1 length=101
+# CCCFFDDFHHHHHJJJJFGIJIHIIIIJJJJEHIJIIIIJEIGIIIJECCHGGHEHHHHEDFFFFEEECDDD#############################
+
+# Header does not have /1 and /2 to specify that they are paired
+# Did fastp break the headers? 
+
+# Since all the large files at the beginning were deleted lets start all over again \o/
+# This time try trim galore and check headers before moving on...
 ```
 
 ```bash

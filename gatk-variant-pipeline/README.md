@@ -90,9 +90,6 @@ pixi run fastqc data/trimmed/*.fastq.gz -o results/qc/trimmed
 ```bash
 # Align the reads to the genome with bwa
 
-pixi run bwa mem reference/genome.fasta data/trimmed/SRR12023503_1.fastq.gz data/trimmed/SRR12023503_2.fastq.gz \
- > results/aligned/SRR12023503.sam
-
 pixi run bwa mem \
     -t $8 \
     -M \
