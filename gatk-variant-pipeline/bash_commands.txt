@@ -261,7 +261,7 @@ zcat data/trimmed/match_SRR12023503_1.fastq.gz | head -4
 # Header does not have /1 and /2 to specify that they are paired
 # Did fastp break the headers? 
 
-# Since all the large files at the beginning were deleted lets start all over again \o/
+# Since all the large files at the beginning were deleted lets start all over again \o/ Cancelled run at 2:14
 # This time try trim galore and check headers before moving on...
 
 cat SRR12023503_1.fastq | head -8
@@ -303,6 +303,41 @@ pixi run trim_galore \
 # No errors this time!
 # QC looks good. per base sequence count is the only thing that failed.
 # Time to align again
+
+# Added command to run in paired mode
+pixi run bwa mem \
+    -t $8 \
+    -M \
+    -P \
+    -R "@RG\tID:SRR12023503\tSM:SRR12023503\tPL:ILLUMINA\tLB:SRR12023503_lib" \
+    reference/genome.fasta \
+    data/trimmed/match_SRR12023503_1_val_1.fq.gz \
+    data/trimmed/match_SRR12023503_2_val_2.fq.gz \
+    > results/aligned/SRR12023503.sam
+
+# Started at 3:45p
+# Deleted all data in raw folder to make room
+# Still has skip orentation errors...Hopefully qc will look better. 
+# finished at 8:44p
+
+pixi run samtools sort results/aligned/SRR12023503.sam -o results/aligned/SRR12023503.bam
+
+pixi run samtools index results/aligned/SRR12023503.bam
+
+pixi run samtools flagstat results/aligned/SRR12023503.bam > results/qc/trimmed/SRR12023503_align_stats.txt
+
+pixi run samtools depth results/aligned/SRR12023503.bam -o results/qc/trimmed/SRR12023503_depth.txt
+
+pixi run picard CollectInsertSizeMetrics \
+    -I results/aligned/SRR12023503.bam \
+    -O results/qc/trimmed/SRR12023503_insert_size_metrics.txt \
+    -H results/qc/trimmed/SRR12023503_insert_size_histogram.pdf \
+    -M 0.5
+
+# Now 0% properly paired and 9% mapped? Not sure what the alignment stats really mean.
+# Coverage depth seems to be above 80
+# Collection size inserts still failed
+```
 
 ```bash
 # Next step Base Quality Score Recalibration (BQSR)

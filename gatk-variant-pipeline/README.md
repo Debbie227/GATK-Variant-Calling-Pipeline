@@ -105,7 +105,7 @@ pixi run trim_galore \
 pixi run bwa mem \
     -t $8 \
     -M \
-    -p \
+    -P \
     -R "@RG\tID:SRR12023503\tSM:SRR12023503\tPL:ILLUMINA\tLB:SRR12023503_lib" \
     reference/genome.fasta \
     data/trimmed/match_SRR12023503_1_val_1.fq.gz \
