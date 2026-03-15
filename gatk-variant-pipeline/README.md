@@ -131,10 +131,30 @@ pixi run gatk MarkDuplicates \
     -O results/aligned/SRR12023503_marked_duplicates.bam \
     -M results/aligned/SRR12023503_duplicate_metrics.txt \
     --CREATE_INDEX true
-
-pixi run picard CollectInsertSizeMetrics \
+```
+### Base quality score recalibration
+```bash
+# Generate recalibration table using known variants
+pixi run gatk BaseRecalibrator \
     -I results/aligned/SRR12023503.bam \
-    -O results/qc/trimmed/SRR12023503_insert_size_metrics.txt \
-    -H results/qc/trimmed/SRR12023503_insert_size_histogram.pdf \
-    -M 0.5
+    -R reference/genome.fasta \
+    --known-sites reference/mills_and_1000G.indels.vcf.gz \
+    --known-sites reference/dbsnp_146.hg38.vcf.gz \
+    -O results/aligned/SRR12023503_recal_data.table
+
+# Apply marked duplicates and recal data
+pixi run gatk ApplyBQSR \
+    -I results/aligned/SRR12023503_marked_duplicates.bam \
+    -R reference/genome.fasta \
+    --bqsr-recal-file results/aligned/SRR12023503_recal_data.table \
+    -O results/aligned/SRR12023503_recalibrated.bam
+```
+
+### Quality control
+```bash
+# Check alignment metrics
+pixi run gatk CollectAlignmentSummaryMetrics \
+    -R reference/genome.fasta \
+    -I results/aligned/SRR12023503_recalibrated.bam \
+    -O results/aligned/SRR12023503_alignment_summary.txt
 ```

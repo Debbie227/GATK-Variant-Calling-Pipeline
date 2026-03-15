@@ -337,9 +337,47 @@ pixi run picard CollectInsertSizeMetrics \
 # Now 0% properly paired and 9% mapped? Not sure what the alignment stats really mean.
 # Coverage depth seems to be above 80
 # Collection size inserts still failed
+
+# Likely a problem with the reference genome used. Still not sure where it came from or how much of chr 22 it covers
+# Don't have the space to download a real genome so let's continue as is!
 ```
 
 ```bash
-# Next step Base Quality Score Recalibration (BQSR)
-# What is it? https://gatk.broadinstitute.org/hc/en-us/articles/360035890531-Base-Quality-Score-Recalibration-BQSR
+pixi run gatk MarkDuplicates \
+    -I results/aligned/SRR12023503.bam \
+    -O results/aligned/SRR12023503_marked_duplicates.bam \
+    -M results/aligned/SRR12023503_duplicate_metrics.txt \
+    --CREATE_INDEX true
+
+pixi run gatk BaseRecalibrator \
+    -I results/aligned/SRR12023503.bam \
+    -R reference/genome.fasta \
+    --known-sites reference/mills_and_1000G.indels.vcf.gz \
+    --known-sites reference/dbsnp_146.hg38.vcf.gz \ 
+    -O results/aligned/SRR12023503_recal_data.table
+ 
+pixi run gatk ApplyBQSR \
+    -I results/aligned/SRR12023503_marked_duplicates.bam \
+    -R reference/genome.fasta \
+    --bqsr-recal-file results/aligned/SRR12023503_recal_data.table \
+    -O results/aligned/SRR12023503_recalibrated.bam
+
+
+# What is BSQR? https://gatk.broadinstitute.org/hc/en-us/articles/360035890531-Base-Quality-Score-Recalibration-BQSR
+# These steps are very fast! It doesn't look like many variant spots were found...
+```
+
+```bash
+# Use GATK alignment summary to check final alignment
+pixi run gatk CollectAlignmentSummaryMetrics \
+    -R reference/genome.fasta \
+    -I results/aligned/SRR12023503_recalibrated.bam \
+    -O results/aligned/SRR12023503_alignment_summary.txt
+
+
+    ```
+
+```bash
+# Use HaplotypeCaller to find raw variants
+
 ```
