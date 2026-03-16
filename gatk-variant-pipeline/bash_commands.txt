@@ -379,5 +379,20 @@ pixi run gatk CollectAlignmentSummaryMetrics \
 
 ```bash
 # Use HaplotypeCaller to find raw variants
+pixi run gatk HaplotypeCaller \
+    -R reference/genome.fasta \
+    -I results/aligned/SRR12023503_recalibrated.bam \
+    -O results/aligned/SRR12023503.g.vcf.gz \
+    -ERC GVCF \          # Emit Reference Confidence mode - creates GVCF format
+    --dbsnp reference/dbsnp_146.hg38.vcf.gz  # Annotate with known variants
 
+# GVCF mode records information about ALL sites (variant and non-variant)
+# What is a gvcf? https://gatk.broadinstitute.org/hc/en-us/articles/360035531812-GVCF-Genomic-Variant-Call-Format
+# Used for family studies or population studies
+
+# Change GVCF to normal vcf
+pixi run gatk GenotypeGVCFs \
+    -R reference/genome.fasta \
+    -V results/aligned/SRR12023503.g.vcf.gz \
+    -O results/aligned/SRR12023503_raw_variants.vcf.gz
 ```
