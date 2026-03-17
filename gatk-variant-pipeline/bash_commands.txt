@@ -396,3 +396,8 @@ pixi run gatk GenotypeGVCFs \
     -V results/aligned/SRR12023503.g.vcf.gz \
     -O results/aligned/SRR12023503_raw_variants.vcf.gz
 ```
+
+```bash
+Variant Quality Score Recalibration
+
+```
