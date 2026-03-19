@@ -399,5 +399,14 @@ pixi run gatk GenotypeGVCFs \
 
 ```bash
 Variant Quality Score Recalibration
+# Completely out of storage data for the month on codespaces with two weeks to go
+# Trying Google shell cloud and google cloud storage.
+```
 
+```bash
+# First download actual refence genome and GATK resource bundle with known variants
+# Actually these already exist on GCS and can be accessed directly
+gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta # accesses directly
+# Created bucket on AWS
+# BWA is not compatible with google storage so the alignment must be done locally. There wont be enough room.
 ```
