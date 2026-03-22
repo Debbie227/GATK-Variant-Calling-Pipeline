@@ -30,7 +30,6 @@ cd data/raw/
 
 # Whole genome sequencing of Polish family chromosome 22
 pixi run fasterq-dump -p SRR12023503 --split-files
-
 # Zip files to keep storage small
 gzip SRR12023503_1.fastq SRR12023503_2.fastq 
 ```

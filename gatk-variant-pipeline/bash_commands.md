@@ -408,5 +408,24 @@ Variant Quality Score Recalibration
 # Actually these already exist on GCS and can be accessed directly
 gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta # accesses directly
 # Created bucket on AWS
-# BWA is not compatible with google storage so the alignment must be done locally. There wont be enough room.
+# BWA is not compatible with google storage so the alignment must be done locally. There wont be enough room. Have $300 credit?
+
+#Create variables
+Project_ID=gatk-resources-490700
+Bucket=gatk-resource-bucket
+Sample=SRR12023503
+```
+```bash
+# Install pixi on GCP
+mkdir -p data/raw
+cd data/raw
+curl -fsSL https://pixi.sh/install.sh | bash
+source ~/.bashrc
+pixi install
+```
+```bash
+# Download raw data
+pixi run fasterq-dump -p $Sample --split-files
+# disk-limit exeeded! To see limits: re-run with '-x' option.
+pixi run fasterq-dump -x -p $Sample --split-files
 ```
