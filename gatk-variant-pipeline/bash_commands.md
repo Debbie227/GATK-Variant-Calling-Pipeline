@@ -428,4 +428,7 @@ pixi install
 pixi run fasterq-dump -p $Sample --split-files
 # disk-limit exeeded! To see limits: re-run with '-x' option.
 pixi run fasterq-dump -x -p $Sample --split-files
+# mem-limit    : 52,428,800 bytes
+# has a size of 1,797,147,729 bytes
+
 ```
