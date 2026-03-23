@@ -35,29 +35,37 @@ gzip SRR12023503_1.fastq SRR12023503_2.fastq
 ```
 
 ```bash
-# Download Chr 22 reference genome
+# Download reference genome
 cd ../..
 
 curl -L -o genome.fasta \
-  https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta
+  https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta
 curl -L -o genome.fasta.fai \
-  https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta.fai
+  https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta.fai
 curl -L -o genome.dict \
-  https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.dict
+  https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dict
 
 # Download known sites for BQSR
 
-    # Known snps from NCBI
-curl -L -o dbsnp_146.hg38.vcf.gz \
-  https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz
-curl -L -o dbsnp_146.hg38.vcf.gz.tbi \
-  https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/dbsnp_146.hg38.vcf.gz.tbi
-
-    # Known indels from 1000 genomes Project
-curl -L -o mills_and_1000G.indels.vcf.gz \
-  https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/mills_and_1000G.indels.vcf.gz
-curl -L -o mills_and_1000G.indels.vcf.gz.tbi \
-  https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/vcf/mills_and_1000G.indels.vcf.gz.tbi
+# HapMap: High-quality SNPs used for training variant filters
+wget https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/hapmap_3.3.hg38.vcf.gz
+wget https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/hapmap_3.3.hg38.vcf.gz.tbi
+ 
+# 1000 Genomes Omni: Another high-quality variant set for training
+wget https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/1000G_omni2.5.hg38.vcf.gz
+wget https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/1000G_omni2.5.hg38.vcf.gz.tbi
+ 
+# 1000 Genomes high-confidence SNPs: Large collection of validated variants
+wget https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/1000G_phase1.snps.high_confidence.hg38.vcf.gz
+wget https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/1000G_phase1.snps.high_confidence.hg38.vcf.gz.tbi
+ 
+# Mills and 1000G indels: High-quality insertions and deletions
+wget https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
+wget https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz.tbi
+ 
+# dbSNP: Database of known variants - helps identify novel vs. known variants
+wget https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf.gz
+wget https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf.gz.tbi
 ```
 
 ```bash
@@ -137,8 +145,8 @@ pixi run gatk MarkDuplicates \
 pixi run gatk BaseRecalibrator \
     -I results/aligned/SRR12023503.bam \
     -R reference/genome.fasta \
-    --known-sites reference/mills_and_1000G.indels.vcf.gz \
-    --known-sites reference/dbsnp_146.hg38.vcf.gz \
+    --known-sites reference/Homo_sapiens_assembly38.dbsnp138.vcf.gz \
+    --known-sites reference/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz \
     -O results/aligned/SRR12023503_recal_data.table
 
 # Apply marked duplicates and recal data
