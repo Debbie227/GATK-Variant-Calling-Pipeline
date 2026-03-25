@@ -164,4 +164,26 @@ pixi run gatk CollectAlignmentSummaryMetrics \
     -R reference/genome.fasta \
     -I results/aligned/SRR12023503_recalibrated.bam \
     -O results/aligned/SRR12023503_alignment_summary.txt
+
+# Check insert size metrics
+pixi run gatk CollectInsertSizeMetrics \
+    -I results/aligned/SRR12023503_recalibrated.bam \
+    -O results/aligned/SRR12023503_insert_size_metrics.txt \
+    -H results/aligned/SRR12023503_insert_size_histogram.pdf
+```
+### Variant Calling
+```bash
+# Call variants from all sites
+gatk HaplotypeCaller \
+    -R reference/genome.fasta \
+    -I results/aligned/SRR12023503_recalibrated.bam \
+    -O results/aligned/SRR12023503.g.vcf.gz \
+    -ERC GVCF \
+    --dbsnp reference/Homo_sapiens_assembly38.dbsnp138.vcf.gz
+
+# Convert GVCF to standard VCF format
+gatk GenotypeGVCFs \
+    -R reference/genome.fasta \
+    -V results/aligned/SRR12023503.g.vcf.gz \
+    -O results/aligned/SRR12023503_raw_variants.vcf.gz
 ```
