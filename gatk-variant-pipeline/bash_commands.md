@@ -431,4 +431,16 @@ pixi run fasterq-dump -x -p $Sample --split-files
 # mem-limit    : 52,428,800 bytes
 # has a size of 1,797,147,729 bytes
 
+# Let's try to run the alignment in a docker container and send it to my gcp bucket
+docker pull biocontainers/bwa:v0.7.17_cv1
+docker run -it --entrypoint /bin/bash biocontainers/bwa:v0.7.17_cv1
+conda install bioconda::sra-tools
+fasterq-dump -x -p SRR12023503 --split-files
+#fasterq-dump command not found
+prefetch SRR12023503 --max-size 10g
+# connection failed
+```
+```bash
+#New terminal try to fasterq-dump straight the gcp bucket
+# Only works with curl...can't use fasterq-dump without downloading locally and copying
 ```
