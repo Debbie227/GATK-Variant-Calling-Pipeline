@@ -408,7 +408,7 @@ Variant Quality Score Recalibration
 # Actually these already exist on GCS and can be accessed directly
 gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta # accesses directly
 # Created bucket on AWS
-# BWA is not compatible with google storage so the alignment must be done locally. There wont be enough room. Have $300 credit?
+# BWA is not compatible with google storage so the alignment must be done locally. There wont be enough room. Have $300 credit so lets try?
 
 #Create variables
 Project_ID=gatk-resources-490700
@@ -430,6 +430,7 @@ pixi run fasterq-dump -p $Sample --split-files
 pixi run fasterq-dump -x -p $Sample --split-files
 # mem-limit    : 52,428,800 bytes
 # has a size of 1,797,147,729 bytes
+# Money doesn't solve all problems
 
 # Let's try to run the alignment in a docker container and send it to my gcp bucket
 docker pull biocontainers/bwa:v0.7.17_cv1
@@ -439,8 +440,72 @@ fasterq-dump -x -p SRR12023503 --split-files
 #fasterq-dump command not found
 prefetch SRR12023503 --max-size 10g
 # connection failed
+
+# Tried fastq-dump and the command was recognized, but didn't recognize flags
+fastq-dump -x -p SRR12023503 --split-files
+# Could not find flags for paired end reads - all combinations errored out
 ```
 ```bash
 #New terminal try to fasterq-dump straight the gcp bucket
 # Only works with curl...can't use fasterq-dump without downloading locally and copying
+```
+```bash
+# New month new codespaces quota!!
+# Still have trimmed and validated paired files as well as aligned bam files
+# Deleting bam and bai files as well as reference files to use GATK bundle ref for alignment
+
+pixi add gsutil
+
+# Try to run bwa mem using remote reference genome
+pixi run bwa mem \
+    -t $8 \
+    -M \
+    -P \
+    -R "@RG\tID:SRR12023503\tSM:SRR12023503\tPL:ILLUMINA\tLB:SRR12023503_lib" \
+    gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta \
+    data/trimmed/match_SRR12023503_1_val_1.fq.gz \
+    data/trimmed/match_SRR12023503_2_val_2.fq.gz \
+    > results/aligned/SRR12023503.sam
+
+# error fail to locate the index files - was pretty sure bwa didn't support remote calls but worth a try.
+# bwa index is needed to create all the index files and the files must be in the same folder. (.amb, .ann, .pac, .bwt, .sa)
+
+# copy the GATK reference files with hg38 genome
+pixi run gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta ref/genome.fasta
+pixi run gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta.fai ref/
+pixi run gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dict ref/
+
+# The dict (sequence dictionary) and fai (fasta index) files could be generated instead of downloaded.
+# samtools faidx reference.fasta
+# gatk CreateSequenceDictionary -R reference.fasta
+
+# It doesn't look like they are necessary for bwa? Not sure why it would need to be copied as GPT suggested.
+# GATK uses both of these files in later processes
+# Dict files get added to the header or BAM and SAM files for matching purposes throughout GATK - must be referenced in bwa mem then to create the sam file?
+
+
+pixi run bwa index ref/genome.fasta
+# looking at the documentation this is not the right command for the whole genome. Genomes over 2GB shouldn't use the standard algorithm
+# cancelling run
+
+pixi run bwa index -a bwtsw ref/genome.fasta
+# Uses new algrithm for whole genome - default is the "is" algorithm
+
+# There is no .sa file - process may have interrupted when the computer went to sleep.
+
+# Added .fasta to gitignore
+# Should have been doing git commits after each step - transfer size is now too big -COMMIT MORE OFTEN
+# error send-pack: unexpected disconnect while reading sideband packet
+# increase buffer limit to 3gb allow all these commits to go through - default buffer is 1mb - max size may be 5gb?
+git config --global http.postBuffer 3147483648
+
+pixi run bwa mem \
+    -t $8 \
+    -M \
+    -P \
+    -R "@RG\tID:SRR12023503\tSM:SRR12023503\tPL:ILLUMINA\tLB:SRR12023503_lib" \
+    ref/genome.fasta \
+    data/trimmed/match_SRR12023503_1_val_1.fq.gz \
+    data/trimmed/match_SRR12023503_2_val_2.fq.gz \
+    > results/aligned/SRR12023503.sam
 ```
