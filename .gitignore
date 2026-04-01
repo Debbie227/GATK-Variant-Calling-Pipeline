@@ -8,3 +8,8 @@
 *.sam
 *.gz
 *.fasta
+*.amb
+*.ann
+*.pac
+*.bwt
+*.sa
