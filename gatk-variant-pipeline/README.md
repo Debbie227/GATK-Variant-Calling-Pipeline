@@ -67,7 +67,7 @@ wget https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/Ho
 
 ```bash
 # Index reference genome
-pixi run bwa index reference/genome.fasta
+pixi run bwa index -a bwtsw ref/genome.fasta
 ```
 ### QC and trim data
 ```bash
