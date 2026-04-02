@@ -522,4 +522,9 @@ pixi run bwa mem \
     data/trimmed/match_SRR12023503_1_val_1.fq.gz \
     data/trimmed/match_SRR12023503_2_val_2.fq.gz \
     > results/aligned/SRR12023503.sam
+
+#Command stalls with no error message
+# Could be memory issue
+# renamed genome.fasta.fai and genome.dict to see if these files are not being found
+# Issue remains
 ```
