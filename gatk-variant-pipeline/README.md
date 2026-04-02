@@ -38,9 +38,9 @@ gzip SRR12023503_1.fastq SRR12023503_2.fastq
 # Download reference genome
 cd ../..
 
-pixi run gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta ref/genome.fasta
-pixi run gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta.fai ref/
-pixi run gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dict ref/
+pixi run gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta reference/genome.fasta
+pixi run gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta.fai reference/
+pixi run gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dict reference/
 
 # Download known sites for BQSR
 
