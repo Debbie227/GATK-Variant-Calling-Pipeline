@@ -493,12 +493,26 @@ pixi run bwa index -a bwtsw ref/genome.fasta
 
 # There is no .sa file - process may have interrupted when the computer went to sleep.
 
+```
+
+```bash
 # Added .fasta to gitignore
 # Should have been doing git commits after each step - transfer size is now too big -COMMIT MORE OFTEN
 # error send-pack: unexpected disconnect while reading sideband packet
 # increase buffer limit to 3gb allow all these commits to go through - default buffer is 1mb - max size may be 5gb?
 git config --global http.postBuffer 3147483648
+# still didn't work
+git reset HEAD~1 # undo last push
+git add -p # split git add into smaller chunks - choose which chunks to commit and push at a time
+# bwt and pac files were 1.5GB adding all index files to gitignore
 
+# Need to get .sa file so lets try again
+pixi run bwa index -a bwtsw ref/genome.fasta
+# After another 40+ minutes I got to the step to make the sa file...20 minutes later it still isn't done...
+# Finally finished properly! [main] Real time: 4175.644 sec; CPU: 3854.110 sec
+# try alignment tomorrow
+```
+```bash
 pixi run bwa mem \
     -t $8 \
     -M \
