@@ -554,4 +554,24 @@ pixi run gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_a
 # Different version of bwa for indexing and for mem
 # Updated pixi toml - Try bwa 0.7.17 - not compatible reverted back to 19
 
+# Try to align with docker bwa 0.7.17
+docker run --rm -v $(pwd):/data staphb/bwa:0.7.17 bwa mem \
+    -M \
+    -P \
+    -R "@RG\tID:SRR12023503\tSM:SRR12023503\tPL:ILLUMINA\tLB:SRR12023503_lib" \
+    ref/genome.fasta \
+    data/trimmed/match_SRR12023503_1_val_1.fq.gz \
+    data/trimmed/match_SRR12023503_2_val_2.fq.gz \
+    > results/aligned/SRR12023503.sam
+
+# Still SA-BWT inconsistency: seq_len is not the same. Abort!
+# Is the genome the issue? gsutil should not give partial files...
+pixi run gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta ref/genome.fasta
+# Same error
+
+# Lets try to index it in a docker container
+docker run --rm -v $(pwd):/data staphb/bwa:0.7.17 bwa index -a bwtsw ref/genome.fasta
+
+# Indexing again failed out before the sa file could be created...
+# Starting cloud pipeline even though I have not been able to finish this
 ```
