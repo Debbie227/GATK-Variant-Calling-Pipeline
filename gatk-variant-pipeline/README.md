@@ -107,7 +107,7 @@ pixi run trim_galore \
 # Align the reads to the genome with bwa
 
 pixi run bwa mem \
-    -t $8 \
+    -t 8 \
     -M \
     -P \
     -R "@RG\tID:SRR12023503\tSM:SRR12023503\tPL:ILLUMINA\tLB:SRR12023503_lib" \
@@ -171,7 +171,7 @@ pixi run gatk CollectInsertSizeMetrics \
 ### Variant Calling
 ```bash
 # Call variants from all sites
-gatk HaplotypeCaller \
+pixi run gatk HaplotypeCaller \
     -R reference/genome.fasta \
     -I results/aligned/SRR12023503_recalibrated.bam \
     -O results/aligned/SRR12023503.g.vcf.gz \
@@ -179,7 +179,7 @@ gatk HaplotypeCaller \
     --dbsnp reference/Homo_sapiens_assembly38.dbsnp138.vcf.gz
 
 # Convert GVCF to standard VCF format
-gatk GenotypeGVCFs \
+pixi run gatk GenotypeGVCFs \
     -R reference/genome.fasta \
     -V results/aligned/SRR12023503.g.vcf.gz \
     -O results/aligned/SRR12023503_raw_variants.vcf.gz

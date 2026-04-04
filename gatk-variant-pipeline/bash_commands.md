@@ -527,4 +527,31 @@ pixi run bwa mem \
 # Could be memory issue
 # renamed genome.fasta.fai and genome.dict to see if these files are not being found
 # Issue remains
+
+# removed the linux variable tag $ that was in front of the number of threads 
+pixi run bwa mem \
+    -t 8 \
+    -M \
+    -P \
+    -R "@RG\tID:SRR12023503\tSM:SRR12023503\tPL:ILLUMINA\tLB:SRR12023503_lib" \
+    ref/genome.fasta \
+    data/trimmed/match_SRR12023503_1_val_1.fq.gz \
+    data/trimmed/match_SRR12023503_2_val_2.fq.gz \
+    > results/aligned/SRR12023503.sam
+
+# Took a lot longer and still stalled out at the same place - just after [M::bwa_idx_load_from_disk] read 0 ALT contigs
+
+# Maybe the bwa index did not complete properly again? Download files from gcp instead of trying index for another hour
+
+pixi run gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta.amb ref/genome.fasta.amb
+pixi run gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta.ann ref/genome.fasta.ann
+pixi run gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta.bwt ref/genome.fasta.bwt
+pixi run gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta.pac ref/genome.fasta.pac
+pixi run gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta.sa ref/genome.fasta.sa
+# Google recommends Gcloud storage cli over gsutil - look into this later
+
+# New error! [bwt_restore_sa] SA-BWT inconsistency: seq_len is not the same. Abort!
+# Different version of bwa for indexing and for mem
+# Updated pixi toml - Try bwa 0.7.17 - not compatible reverted back to 19
+
 ```
