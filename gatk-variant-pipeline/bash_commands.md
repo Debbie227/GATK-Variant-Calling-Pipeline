@@ -575,3 +575,81 @@ docker run --rm -v $(pwd):/data staphb/bwa:0.7.17 bwa index -a bwtsw ref/genome.
 # Indexing again failed out before the sa file could be created...
 # Starting cloud pipeline even though I have not been able to finish this
 ```
+
+```bash
+# upload data to google cloud for gcloud pipeline
+# Fasterq-dump fastq sequences and upload zipped files to google cloud
+pixi run fasterq-dump -p SRR12023503 --split-files
+gzip SRR12023503_1.fastq SRR12023503_2.fastq
+gcloud storage cp SRR12023503_1.fastq.gz SRR12023503_2.fastq.gz gs://gatk-resource-bucket
+# gcloud not installed - lets use a docker container
+
+# Login
+docker run -it --rm \
+  -v ${PWD}/gcp-creds:/root/.config/gcloud \
+  gcr.io/google.com/cloudsdktool/google-cloud-cli:slim \
+  gcloud auth application-default login
+
+# set project
+docker run -it --rm \
+  -v ${PWD}/gcp-creds:/root/.config/gcloud \
+  gcr.io/google.com/cloudsdktool/google-cloud-cli:slim \
+  gcloud auth application-default set-quota-project gatk-resources-490700
+
+# Copy file
+ docker run -it --rm \
+  -v ${PWD}/gcp-creds:/root/.config/gcloud \
+  gcr.io/google.com/cloudsdktool/google-cloud-cli:slim \
+  gcloud storage cp SRR12023503_1.fastq.gz SRR12023503_2.fastq.gz gs://gatk-resource-bucket
+
+# Account not set
+ docker run -it --rm \
+  -v ${PWD}/gcp-creds:/root/.config/gcloud \
+  gcr.io/google.com/cloudsdktool/google-cloud-cli:slim \
+  gcloud config set account email@gmail.com
+
+# Current active account does not have valid credentials For service account, please activate it first
+ docker run -it --rm \
+  -v ${PWD}/gcp-creds:/root/.config/gcloud \
+  gcr.io/google.com/cloudsdktool/google-cloud-cli:slim \
+  gcloud auth activate-service-account email@gmail.com
+
+# Added storage admin permissions on gcloud
+ docker run -it --rm \
+  -v ${PWD}/gcp-creds:/root/.config/gcloud \
+  gcr.io/google.com/cloudsdktool/google-cloud-cli:slim \
+  gcloud storage cp SRR12023503_1.fastq.gz SRR12023503_2.fastq.gz gs://gatk-resource-bucket
+
+docker build -t load_data:v001 .
+# Can't build - no auth account
+
+# Lets try the authentication in the container rather than externally
+docker run -it --rm \
+-v ${PWD} \
+gcr.io/google.com/cloudsdktool/google-cloud-cli:slim
+
+# In container
+gcloud auth application-default login
+gcloud auth application-default set-quota-project gatk-resources-490700
+gcloud storage cp SRR12023503_1.fastq.gz SRR12023503_2.fastq.gz gs://gatk-resource-bucket
+# You do not currently have an active account selected.
+gcloud config set account email@gmail.com
+# Still no valid credentials...
+gcloud auth login
+gcloud config set project gatk-resources-490700
+gcloud storage cp SRR12023503_1.fastq.gz SRR12023503_2.fastq.gz gs://gatk-resource-bucket
+# so the problem was application-default rather than auth login
+# urls do not match objects or files
+cd /workspaces/GATK-Variant-Calling-Pipeline/gatk-variant-pipeline
+# No files in directory
+
+docker run -it --rm \
+-v /workspaces/GATK-Variant-Calling-Pipeline/gatk-variant-pipeline/data/raw:/app/data \
+gcr.io/google.com/cloudsdktool/google-cloud-cli:slim
+
+# In container
+gcloud auth login
+gcloud config set project gatk-resources-490700
+gcloud storage cp SRR12023503_1.fastq.gz SRR12023503_2.fastq.gz gs://gatk-resource-bucket
+# Bucket finally has data!!!!
+```
