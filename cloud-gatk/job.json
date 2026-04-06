@@ -5,8 +5,8 @@
           "runnables": [
             {
               "container": {
-                "imageUri": "gcr.io/GATK_PROJECT/gatk-pipeline:latest",
-                "commands": ["bash", "run_gatk.sh"]
+                "imageUri": "gcr.io/gatk-resources-490700/gatk-pipeline:latest",
+                "commands": ["bash", "/workspace/variant-pipeline.sh"]
               }
             }
           ],

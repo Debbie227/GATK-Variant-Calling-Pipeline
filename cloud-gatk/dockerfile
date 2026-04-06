@@ -4,7 +4,12 @@ FROM mambaorg/micromamba:1.5.0
 ENV ENV_NAME=gatk-pipeline
 
 # Copy lockfile
-COPY conda-lock.yml /tmp/conda-lock.yml variant-pipeline.sh /workspace/
+COPY conda-lock.yml /tmp/conda-lock.yml
+
+# Copy pipeline script and make it executable
+COPY variant-pipeline.sh /workspace/
+
+RUN chmod +x /workspace/variant-pipeline.sh
 
 # Install conda-lock inside container
 RUN micromamba install -y -n base -c conda-forge conda-lock && \
