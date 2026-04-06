@@ -63,11 +63,15 @@ gcloud artifacts repositories create gcr.io \
     --description="GCR Compatibility Repository"
 
 gcloud builds submit --tag gcr.io/gatk-resources-490700/gatk-pipeline:latest
+# SUCCESS!!!
 
 # Submit the job
 gcloud batch jobs submit gatk-job \
   --location=us-central1 \
   --config=job.json
+# Invalid JSON payload received. Unknown name "diskSizeGb"
+# Changed all field names from CamelCase to snake_case - same error
+# These LLMs don't know how to write a config. Break time and resume tomorrow https://docs.cloud.google.com/batch/docs/create-run-example-job 
 
 # Check if it worked
 gcloud batch jobs describe gatk-job --location=us-central1
@@ -75,6 +79,4 @@ gcloud batch jobs describe gatk-job --location=us-central1
 
 ### Next steps
 
-- Permissions to use google cloud with gcloud auth and gcloud projects
-- Build and push to Google Container Registry using gcloud build
 - Submit the job gcloud batch jobs

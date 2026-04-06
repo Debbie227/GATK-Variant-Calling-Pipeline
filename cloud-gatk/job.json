@@ -5,33 +5,33 @@
           "runnables": [
             {
               "container": {
-                "imageUri": "gcr.io/gatk-resources-490700/gatk-pipeline:latest",
+                "image_uri": "gcr.io/gatk-resources-490700/gatk-pipeline:latest",
                 "commands": ["bash", "/workspace/variant-pipeline.sh"]
               }
             }
           ],
-        "computeResource": {
-          "cpuMilli": 8000,
-          "memoryMib": 32000
+        "compute_resource": {
+          "cpu_milli": 8000,
+          "memory_mib": 32000
         },
-        "maxRetryCount": 1
+        "max_retry_count": 1
       },
-      "taskCount": 1
+      "task_count": 1
     }
   ],
-  "allocationPolicy": {
+  "allocation_policy": {
     "instances": [
       {
         "policy": {
-          "machineType": "n2-standard-8",
-          "bootDisk": {
-            "diskSizeGb": 200
+          "machine_type": "n2-standard-8",
+          "boot_disk": {
+            "disk_size_gb": 200
           }
         }
       }
     ]
   },
-  "logsPolicy": {
+  "logs_policy": {
     "destination": "CLOUD_LOGGING"
   }
 }
