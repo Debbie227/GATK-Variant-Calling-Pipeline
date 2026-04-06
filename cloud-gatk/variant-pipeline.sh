@@ -37,6 +37,10 @@ bwa mem -t 8 \
   ${SAMPLE}_1_val_1.fq.gz ${SAMPLE}_2_val_2.fq.gz \
   > ${SAMPLE}.sam
 
+echo "Performing alignment check..."
+samtools flagstat ${SAMPLE}.sam > ${SAMPLE}.align_stats.txt
+samtools depth ${SAMPLE}.sam > ${SAMPLE}.depth.txt
+
 echo "Sorting BAM..."
 samtools sort ${SAMPLE}.sam -o ${SAMPLE}.bam
 samtools index ${SAMPLE}.bam
@@ -69,6 +73,6 @@ gatk HaplotypeCaller \
   -O ${SAMPLE}.vcf.gz
 
 echo "Uploading results..."
-gsutil cp *.fastq.gz *.bam *.bai .vcf.gz gs://$BUCKET/results/
+gsutil cp *.fastq.gz *.bam *.bai *.depth.txt *.align_stats.txt *.vcf.gz gs://$BUCKET/results/
 
 echo "DONE"
