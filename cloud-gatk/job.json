@@ -36,10 +36,7 @@
           ]
         }
       }
-    ],
-    "location": {
-      "zones": ["us-west1-a", "us-west1-b", "us-west1-c"]
-    }
+    ]
   },
   "logs_policy": {
     "destination": "CLOUD_LOGGING"

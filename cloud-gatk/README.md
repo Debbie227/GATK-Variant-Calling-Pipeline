@@ -79,10 +79,27 @@ gcloud batch jobs submit gatk-job \
 # Changed the persistent cloud storage to local disk https://docs.cloud.google.com/batch/docs/create-run-job-storage#gcloud
 # Data not copied via the shell pipeline should go away once the job is over
 
+# New day - new docker instance. Re-run auth, set project, cd
+
+gcloud batch jobs submit gatk-job \
+  --location=us-west1 \
+  --config=job.json
+
+# Unknown name \"zones\"
+# removed location as it is specified in jobs submit
+
+# Job gatk-job-38b24a8f-2310-4f9c-a0f2-60370 was successfully submitted.
+
 # Check if it worked
-gcloud batch jobs describe gatk-job --location=us-central1
+gcloud batch jobs describe gatk-job --location=us-west1
+
+#   state: SCHEDULED
+
+# Navigate to compute engine and there is a vm created!
+# Navigate to batch and there is 1 task scheduled - not yet running
+
+# There are a ton of logs already - looks like there is still permissions needed: Batch agent reporter
+
+# replace ##### with service account number
+gcloud projects add-iam-policy-binding gatk-resources-490700 --member="serviceAccount:#####-compute@developer.gserviceaccount.com" --role="roles/batch.agentReporter"
 ```
-
-### Next steps
-
-- Submit the job gcloud batch jobs
