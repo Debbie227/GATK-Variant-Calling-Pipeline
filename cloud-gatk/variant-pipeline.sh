@@ -5,7 +5,7 @@ set -euo pipefail
 SAMPLE=SRR12023503
 BUCKET=gatk-resource-bucket
 
-WORKDIR=/mnt/disks/work # Directory for storing large working files in Google Cloud Batch
+WORKDIR=/mnt/disks/local-ssd/work # Directory for storing large working files in Google Cloud Batch
 mkdir -p $WORKDIR
 cd $WORKDIR
 

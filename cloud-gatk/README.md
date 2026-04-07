@@ -135,4 +135,10 @@ gcloud builds submit --tag gcr.io/gatk-resources-490700/gatk-pipeline:v2
 gcloud batch jobs submit gatk-job2 \
   --location=us-west1 \
   --config=job.json
+
+# This time I made it all the way to the shell script!
+# Error: textPayload: "mkdir: cannot create directory ‘/mnt/disks’: Permission denied"
+
+# Added the local-ssd name to the path from job.json so the script can properly make the directory
+gcloud builds submit --tag gcr.io/gatk-resources-490700/gatk-pipeline:v2.1
 ```
