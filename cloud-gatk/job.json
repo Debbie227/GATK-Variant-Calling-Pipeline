@@ -14,7 +14,15 @@
           "cpu_milli": 8000,
           "memory_mib": 32000
         },
-        "max_retry_count": 1
+        "volumes": [
+          {
+            "gcs": {
+              "remote_path": "gatk-resource-bucket"
+            },
+            "mount_path": "/mnt/share"
+          }
+        ],
+        "max_retry_count": 2
       },
       "task_count": 1
     }
@@ -24,12 +32,13 @@
       {
         "policy": {
           "machine_type": "n2-standard-8",
-          "boot_disk": {
-            "disk_size_gb": 200
-          }
+          "provisioning_model": "SPOT"
         }
       }
-    ]
+    ],
+    "location": {
+      "zones": ["us-west1-a", "us-west1-b", "us-west1-c"]
+    }
   },
   "logs_policy": {
     "destination": "CLOUD_LOGGING"
