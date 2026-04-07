@@ -19,7 +19,7 @@ RUN micromamba install -y -n base -c conda-forge conda-lock && \
 # Create environment from lockfile
 RUN micromamba run -n base conda-lock install \
     --mamba \
-    --name $ENV_NAME \
+    --prefix /opt/conda/envs/$ENV_NAME \
     /tmp/conda-lock.yml
 
 # Activate environment by default

@@ -102,4 +102,37 @@ gcloud batch jobs describe gatk-job --location=us-west1
 
 # replace ##### with service account number
 gcloud projects add-iam-policy-binding gatk-resources-490700 --member="serviceAccount:#####-compute@developer.gserviceaccount.com" --role="roles/batch.agentReporter"
+
+# The first run failed (though I'm still super excited I got the submission correct!)
+# There are hundreds of log messages but I think the problem is:
+# textPayload: "critical libmamba Cannot activate, prefix does not exist at: '/opt/conda/envs/gatk-pipeline'"
+
+# The total cost of using Google Cloud so far is $0.07
+
+# Updated docker file to explicitly create a prefix path per VS code agent
+```
+
+```bash
+# New terminal
+# Deleted lowercase dockerfile which is now obsolete to avoid confusion with builds
+
+docker build --no-cache -t gatk-pipeline-test-updated .
+docker run --rm --entrypoint sh gatk-pipeline-test-updated -c 'ls -ld /opt/conda/envs/gatk-pipeline'
+# The missing prefix exists now!
+
+# I also realized that the versions in my yaml file are not the same as I used in my last pipeline
+# Updated several versions
+conda-lock -f environment.yaml -p linux-64
+# The changed versions weren't compatible so I'll leave it alone.
+```
+
+```bash
+# back to the gcloud docker command line
+# The latest tag is a lie. Let's name it something more meaningful?
+
+gcloud builds submit --tag gcr.io/gatk-resources-490700/gatk-pipeline:v2
+
+gcloud batch jobs submit gatk-job2 \
+  --location=us-west1 \
+  --config=job.json
 ```
