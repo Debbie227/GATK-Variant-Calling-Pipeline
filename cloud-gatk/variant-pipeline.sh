@@ -10,7 +10,7 @@ mkdir -p $WORKDIR
 cd $WORKDIR
 
 echo "Copying input data..."
-gcloud storage cp gs://$BUCKET/data/${SAMPLE}_*.fastq.gz .
+gcloud storage cp gs://$BUCKET/${SAMPLE}_*.fastq.gz .
 
 echo "Copying reference..."
 gcloud storage cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta .

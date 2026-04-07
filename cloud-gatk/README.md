@@ -131,6 +131,7 @@ conda-lock -f environment.yaml -p linux-64
 # The latest tag is a lie. Let's name it something more meaningful?
 
 gcloud builds submit --tag gcr.io/gatk-resources-490700/gatk-pipeline:v2
+# Every build change must be updated in job.json
 
 gcloud batch jobs submit gatk-job2 \
   --location=us-west1 \
@@ -172,4 +173,23 @@ gcloud batch jobs submit gatk-job5 \
 
 # New error! /workspace/variant-pipeline.sh: line 13: gsutil: command not found
 # I thought since it was a google cloud vm it'd have gsutil...
+# Updated to gcloud storage in pipeline and added gcloud sdk to environment.yaml
+
+# In other terminal
+conda-lock -f environment.yaml -p linux-64
+
+# back to docker terminal
+gcloud builds submit --tag gcr.io/gatk-resources-490700/gatk-pipeline:v2.3
+
+gcloud batch jobs submit gatk-job6 \
+  --location=us-west1 \
+  --config=job.json
+
+# New errors! (gcloud.storage.cp) The following URLs matched no objects or files: gs://gatk-resource-bucket/data/SRR12023503_*.fastq.gz
+# FutureWarning: You are using a Python version (3.10.14) which Google will stop supporting
+
+# There is no data folder in the bucket
+# Not sure where the really old python version is coming in...maybe the mamba image?
+
+# Good stopping place for the day - tomorrow re-build image with correct path name, update job.json with image, then sumbit job
 ```
