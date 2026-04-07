@@ -5,19 +5,17 @@ set -euo pipefail
 SAMPLE=SRR12023503
 BUCKET=gatk-resource-bucket
 
-sudo su
-
 WORKDIR=/mnt/disks/local-ssd/work # Directory for storing large working files in Google Cloud Batch
 mkdir -p $WORKDIR
 cd $WORKDIR
 
 echo "Copying input data..."
-gsutil cp gs://$BUCKET/data/${SAMPLE}_*.fastq.gz .
+gcloud storage cp gs://$BUCKET/data/${SAMPLE}_*.fastq.gz .
 
 echo "Copying reference..."
-gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta .
-gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta.fai .
-gsutil cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dict .
+gcloud storage cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta .
+gcloud storage cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta.fai .
+gcloud storage cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dict .
 
 echo "Indexing reference..."
 bwa index Homo_sapiens_assembly38.fasta
@@ -75,6 +73,6 @@ gatk HaplotypeCaller \
   -O ${SAMPLE}.vcf.gz
 
 echo "Uploading results..."
-gsutil cp *.fastq.gz *.bam *.bai *.depth.txt *.align_stats.txt *.vcf.gz gs://$BUCKET/results/
+gcloud storage cp *.fastq.gz *.bam *.bai *.depth.txt *.align_stats.txt *.vcf.gz gs://$BUCKET/results/
 
 echo "DONE"

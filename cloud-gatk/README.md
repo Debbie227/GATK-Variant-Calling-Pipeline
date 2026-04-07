@@ -159,4 +159,17 @@ gcloud builds submit --tag gcr.io/gatk-resources-490700/gatk-pipeline:v2.2
 gcloud batch jobs submit gatk-job4 \
   --location=us-west1 \
   --config=job.json
+
+# Failed: /workspace/variant-pipeline.sh: line 8: sudo: command not found
+# Remove sudo and try again
+# Also changed retry to 1 - no reason to keep trying on these early failures
+
+gcloud builds submit --tag gcr.io/gatk-resources-490700/gatk-pipeline:v2.2
+
+gcloud batch jobs submit gatk-job5 \
+  --location=us-west1 \
+  --config=job.json
+
+# New error! /workspace/variant-pipeline.sh: line 13: gsutil: command not found
+# I thought since it was a google cloud vm it'd have gsutil...
 ```

@@ -13,7 +13,7 @@
 version: 1
 metadata:
   content_hash:
-    linux-64: f5dcaac6acfdd44c13aea329badbba948711c5bc5d116b0e40a1303ff6ff3a5e
+    linux-64: b0dafc4dd7de1d31029a91bb0fd12d2646c7a4fdf4774abedf69496cd600afdb
   channels:
   - url: conda-forge
     used_env_vars: []
@@ -331,6 +331,19 @@ package:
   hash:
     md5: 3bf7b9fd5a7136126e0234db4b87c8b6
     sha256: aac402a8298f0c0cc528664249170372ef6b37ac39fdc92b40601a6aed1e32ff
+  category: main
+  optional: false
+- name: google-cloud-sdk
+  version: 564.0.0
+  manager: conda
+  platform: linux-64
+  dependencies:
+    python: '>=3.10,<3.11.0a0'
+    python_abi: 3.10.*
+  url: https://conda.anaconda.org/conda-forge/linux-64/google-cloud-sdk-564.0.0-py310hff52083_0.conda
+  hash:
+    md5: 3fae69fbbb6ad1c8622e23661513b553
+    sha256: 07564c0e15ba662c9e8ccd5bc5739df8e472b13b42a1d77f5db1fd4f99663ad4
   category: main
   optional: false
 - name: graphite2
@@ -905,17 +918,17 @@ package:
   category: main
   optional: false
 - name: openssl
-  version: 3.6.1
+  version: 3.6.2
   manager: conda
   platform: linux-64
   dependencies:
     __glibc: '>=2.17,<3.0.a0'
     ca-certificates: ''
     libgcc: '>=14'
-  url: https://conda.anaconda.org/conda-forge/linux-64/openssl-3.6.1-h35e630c_1.conda
+  url: https://conda.anaconda.org/conda-forge/linux-64/openssl-3.6.2-h35e630c_0.conda
   hash:
-    md5: f61eb8cd60ff9057122a3d338b99c00f
-    sha256: 44c877f8af015332a5d12f5ff0fb20ca32f896526a7d0cdb30c769df1144fb5c
+    md5: da1b85b6a87e141f5140bb9924cecab0
+    sha256: c0ef482280e38c71a08ad6d71448194b719630345b0c9c60744a2010e8a8e0cb
   category: main
   optional: false
 - name: pbzip2
