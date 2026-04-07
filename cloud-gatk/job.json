@@ -14,14 +14,6 @@
           "cpu_milli": 8000,
           "memory_mib": 32000
         },
-        "volumes": [
-          {
-            "gcs": {
-              "remote_path": "gatk-resource-bucket"
-            },
-            "mount_path": "/mnt/share"
-          }
-        ],
         "max_retry_count": 2
       },
       "task_count": 1
@@ -32,7 +24,16 @@
       {
         "policy": {
           "machine_type": "n2-standard-8",
-          "provisioning_model": "SPOT"
+          "provisioning_model": "SPOT",
+          "disks": [
+            {
+              "newDisk": {
+                "type": "local-ssd",
+                "size_gb": 200
+              },
+              "device_name": "local-ssd"
+            }
+          ]
         }
       }
     ],

@@ -73,6 +73,12 @@ gcloud batch jobs submit gatk-job \
 # Changed all field names from CamelCase to snake_case - same error
 # These LLMs don't know how to write a config. Break time and resume tomorrow https://docs.cloud.google.com/batch/docs/create-run-example-job 
 
+# Changed to mounted volume using cloud bucket - I assume this will copy all files to bucket during run making the copy command in the script not needed
+# Which compute engine to use https://www.cloudkeeper.com/insights/blog/gcp-instance-types-explained-making-right-choice-your-workloads
+# Added same location as bucket- transfering between locations costs more
+# Changed the persistent cloud storage to local disk https://docs.cloud.google.com/batch/docs/create-run-job-storage#gcloud
+# Data not copied via the shell pipeline should go away once the job is over
+
 # Check if it worked
 gcloud batch jobs describe gatk-job --location=us-central1
 ```
