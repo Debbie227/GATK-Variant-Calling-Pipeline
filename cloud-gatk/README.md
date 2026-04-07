@@ -107,7 +107,7 @@ gcloud projects add-iam-policy-binding gatk-resources-490700 --member="serviceAc
 # There are hundreds of log messages but I think the problem is:
 # textPayload: "critical libmamba Cannot activate, prefix does not exist at: '/opt/conda/envs/gatk-pipeline'"
 
-# The total cost of using Google Cloud so far is $0.07
+# The total cost of using Google Cloud so far is $0.07 - credits left $296.42
 
 # Updated docker file to explicitly create a prefix path per VS code agent
 ```
@@ -141,4 +141,22 @@ gcloud batch jobs submit gatk-job2 \
 
 # Added the local-ssd name to the path from job.json so the script can properly make the directory
 gcloud builds submit --tag gcr.io/gatk-resources-490700/gatk-pipeline:v2.1
+
+gcloud batch jobs submit gatk-job3 \
+  --location=us-west1 \
+  --config=job.json
+
+# For peace of mind I checked to see how many VMs I had and there is only one with the latest job :)
+# No money has been spent during these job failures
+
+# Same error textPayload: "mkdir: cannot create directory ‘/mnt/disks’: Permission denied"
+# Added super user login to script
+# Also added mount Path to json.jobs and rw option
+# Use a local SSD: https://docs.cloud.google.com/batch/docs/create-run-job-storage#gcloud_3
+
+gcloud builds submit --tag gcr.io/gatk-resources-490700/gatk-pipeline:v2.2
+
+gcloud batch jobs submit gatk-job4 \
+  --location=us-west1 \
+  --config=job.json
 ```

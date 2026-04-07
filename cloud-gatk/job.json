@@ -5,9 +5,16 @@
           "runnables": [
             {
               "container": {
-                "image_uri": "gcr.io/gatk-resources-490700/gatk-pipeline:v2.1",
+                "image_uri": "gcr.io/gatk-resources-490700/gatk-pipeline:v2.2",
                 "commands": ["bash", "/workspace/variant-pipeline.sh"]
               }
+            }
+          ],
+          "volumes": [
+            {
+              "device_name": "local-ssd",
+              "mount_path": "/mnt/disks/local-ssd",
+              "mountOptions": "rw,async"
             }
           ],
         "compute_resource": {
