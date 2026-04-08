@@ -13,7 +13,7 @@
 version: 1
 metadata:
   content_hash:
-    linux-64: 6190a40daddb15eb68ea254c63aa0fd9b28fe8514d7d8bbe1fc0163002020e14
+    linux-64: 3481bc6d6465e35423ec0bd5799cc3d32b6015d02ba15c7f5abad13c9795f283
   channels:
   - url: conda-forge
     used_env_vars: []
@@ -190,6 +190,23 @@ package:
   hash:
     md5: 7de50d165039df32d38be74c1b34a910
     sha256: 210155553489739765f31001f84eba91e58d9c692b032eed33f1a20340c78acb
+  category: main
+  optional: false
+- name: fastq_utils
+  version: 0.25.3
+  manager: conda
+  platform: linux-64
+  dependencies:
+    bzip2: '>=1.0.8,<2.0a0'
+    libgcc: '>=13'
+    liblzma: '>=5.8.1,<6.0a0'
+    libzlib: '>=1.2.13,<2.0a0'
+    ncurses: '>=6.5,<7.0a0'
+    samtools: ''
+  url: https://conda.anaconda.org/bioconda/linux-64/fastq_utils-0.25.3-ha9dfd29_0.tar.bz2
+  hash:
+    md5: 46c617123bff6d25e5b3f9328bc0b99c
+    sha256: 50fcece343e914fe0e8d99255a9ed518abd0bac29c25aad4c47cd035e0dace3b
   category: main
   optional: false
 - name: fastqc

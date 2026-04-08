@@ -12,3 +12,4 @@ dependencies:
   - openjdk=17
   - google-cloud-sdk=564.0.0
   - pip
+  - fastq_utils=0.25.3

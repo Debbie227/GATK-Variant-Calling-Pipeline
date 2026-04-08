@@ -20,21 +20,27 @@ gcloud storage cp gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_as
 echo "Indexing reference..."
 bwa index Homo_sapiens_assembly38.fasta
 
+echo "Matching paired reads..."
+fastq_filterpair \
+  ${SAMPLE}_1.fastq.gz ${SAMPLE}_2.fastq.gz \
+  match_${SAMPLE}_1.fastq.gz match_${SAMPLE}_2.fastq.gz \
+  ${SAMPLE}_single.fastq.gz
+
 echo "Running FastQC..."
-fastqc ${SAMPLE}_*.fastq.gz
+fastqc match_${SAMPLE}_*.fastq.gz
 
 echo "Trimming reads..."
 trim_galore \
   --paired \
   --quality 20 \
   --length 50 \
-  ${SAMPLE}_1.fastq.gz ${SAMPLE}_2.fastq.gz
+  match_${SAMPLE}_1.fastq.gz match_${SAMPLE}_2.fastq.gz
 
 echo "Running alignment..."
 bwa mem -t 8 \
   -R "@RG\tID:$SAMPLE\tSM:$SAMPLE\tPL:ILLUMINA" \
   Homo_sapiens_assembly38.fasta \
-  ${SAMPLE}_1_val_1.fq.gz ${SAMPLE}_2_val_2.fq.gz \
+  match_${SAMPLE}_1_val_1.fq.gz match_${SAMPLE}_2_val_2.fq.gz \
   > ${SAMPLE}.sam
 
 echo "Performing alignment check..."

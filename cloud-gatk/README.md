@@ -270,4 +270,12 @@ gcloud batch jobs submit gatk-job10 \
 
 # There were a ton of error level warnings on copying but it seems to have worked?
 # BWA is indexing the ref genome! 100 iterations done at 1:50pm - time for a break
+
+# Finished indexing, ran fastqc, ran trimgalore and created val_1 and val_2 files
+# Ended with error: Read 2 output is truncated at sequence count: 18723539, please check your paired-end input files! Terminating...
+
+# Nextflow would be nice since I could re-run steps without starting over from the beginning...
+# Added filterpair to pipeline to ensure both files have the same sequences
+
+
 ```
