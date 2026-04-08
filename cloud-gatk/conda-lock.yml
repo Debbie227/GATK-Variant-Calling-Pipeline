@@ -13,7 +13,7 @@
 version: 1
 metadata:
   content_hash:
-    linux-64: b0dafc4dd7de1d31029a91bb0fd12d2646c7a4fdf4774abedf69496cd600afdb
+    linux-64: 6190a40daddb15eb68ea254c63aa0fd9b28fe8514d7d8bbe1fc0163002020e14
   channels:
   - url: conda-forge
     used_env_vars: []
@@ -931,6 +931,18 @@ package:
     sha256: c0ef482280e38c71a08ad6d71448194b719630345b0c9c60744a2010e8a8e0cb
   category: main
   optional: false
+- name: packaging
+  version: '26.0'
+  manager: conda
+  platform: linux-64
+  dependencies:
+    python: ''
+  url: https://conda.anaconda.org/conda-forge/noarch/packaging-26.0-pyhcf101f3_0.conda
+  hash:
+    md5: b76541e68fea4d511b1ac46a28dcd2c6
+    sha256: c1fc0f953048f743385d31c468b4a678b3ad20caffdeaa94bed85ba63049fd58
+  category: main
+  optional: false
 - name: pbzip2
   version: 1.1.13
   manager: conda
@@ -983,6 +995,20 @@ package:
   hash:
     md5: 1832561770273ca7cf52b989dd83e6c3
     sha256: a21c2cc838c5fb97757f639cd6db77cc1e1ed572ae3c49109cd1e1481f1f0c63
+  category: main
+  optional: false
+- name: pip
+  version: 26.0.1
+  manager: conda
+  platform: linux-64
+  dependencies:
+    python: '>=3.10,<3.13.0a0'
+    setuptools: ''
+    wheel: ''
+  url: https://conda.anaconda.org/conda-forge/noarch/pip-26.0.1-pyh8b19718_0.conda
+  hash:
+    md5: 67bdec43082fd8a9cffb9484420b39a2
+    sha256: 8e1497814a9997654ed7990a79c054ea5a42545679407acbc6f7e809c73c9120
   category: main
   optional: false
 - name: pixman
@@ -1123,6 +1149,18 @@ package:
     sha256: d74c1f71fb77a134019d144b4e7acf73226c529c6db277f58655e1ffb927b7e8
   category: main
   optional: false
+- name: setuptools
+  version: 82.0.1
+  manager: conda
+  platform: linux-64
+  dependencies:
+    python: '>=3.10'
+  url: https://conda.anaconda.org/conda-forge/noarch/setuptools-82.0.1-pyh332efcf_0.conda
+  hash:
+    md5: 8e194e7b992f99a5015edbd4ebd38efd
+    sha256: 82088a6e4daa33329a30bc26dc19a98c7c1d3f05c0f73ce9845d4eab4924e9e1
+  category: main
+  optional: false
 - name: tk
   version: 8.6.13
   manager: conda
@@ -1159,6 +1197,19 @@ package:
   hash:
     md5: ad659d0a2b3e47e38d829aa8cad2d610
     sha256: 1d30098909076af33a35017eed6f2953af1c769e273a0626a04722ac4acaba3c
+  category: main
+  optional: false
+- name: wheel
+  version: 0.46.3
+  manager: conda
+  platform: linux-64
+  dependencies:
+    packaging: '>=24.0'
+    python: '>=3.10'
+  url: https://conda.anaconda.org/conda-forge/noarch/wheel-0.46.3-pyhd8ed1ab_0.conda
+  hash:
+    md5: bdbd7385b4a67025ac2dba4ef8cb6a8f
+    sha256: d6cf2f0ebd5e09120c28ecba450556ce553752652d91795442f0e70f837126ae
   category: main
   optional: false
 - name: xopen

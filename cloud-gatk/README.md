@@ -249,7 +249,25 @@ gcloud builds submit --tag gcr.io/gatk-resources-490700/gatk-pipeline:v2.5
 
 gcloud builds submit --tag gcr.io/gatk-resources-490700/gatk-pipeline:v2.6
 
+# Maybe I should check locally to see if the file exists before submitting again...
+# Other terminal
+docker build --no-cache -t gatk-pipeline-test .
+# Too big...not enough space on codespaces
+docker image prune -a
+# Total reclaimed space: 243MB
+
+# submit the job without checking it is then
 gcloud batch jobs submit gatk-job9 \
   --location=us-west1 \
   --config=job.json
+
+# The build failed with no module named pip so of course the job failed too
+# Added pip - re-ran conda lock - re-submitted build 2.6
+
+gcloud batch jobs submit gatk-job10 \
+  --location=us-west1 \
+  --config=job.json
+
+# There were a ton of error level warnings on copying but it seems to have worked?
+# BWA is indexing the ref genome! 100 iterations done at 1:50pm - time for a break
 ```
