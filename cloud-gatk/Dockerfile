@@ -25,6 +25,11 @@ RUN micromamba run -n base conda-lock install \
 # Activate environment by default
 ENV PATH=/opt/conda/envs/$ENV_NAME/bin:$PATH
 
+# Install google-crc32c for gcloud compatibility
+RUN /opt/conda/envs/gatk-pipeline/bin/python -m pip install \
+    google-crc32c --upgrade \
+    --target /opt/conda/envs/gatk-pipeline/share/google-cloud-sdk-564.0.0-0/lib/third_party
+
 # Set working directory
 WORKDIR /workspace
 

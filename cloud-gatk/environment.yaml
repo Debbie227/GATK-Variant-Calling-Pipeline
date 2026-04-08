@@ -11,4 +11,3 @@ dependencies:
   - cutadapt=4.6
   - openjdk=17
   - google-cloud-sdk=564.0.0
-  - google-crc32c
