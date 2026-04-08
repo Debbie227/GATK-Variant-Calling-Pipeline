@@ -277,5 +277,13 @@ gcloud batch jobs submit gatk-job10 \
 # Nextflow would be nice since I could re-run steps without starting over from the beginning...
 # Added filterpair to pipeline to ensure both files have the same sequences
 
+# Cost of failed pipeline - 1hr 17min run  cost $0.02 - remaining credits $296.28 
 
+# locked environment, ran cloud container, raw cloud auth, ran set project, cd
+
+gcloud builds submit --tag gcr.io/gatk-resources-490700/gatk-pipeline:v2.7
+
+gcloud batch jobs submit gatk-job11 \
+  --location=us-west1 \
+  --config=job.json
 ```
