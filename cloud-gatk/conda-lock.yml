@@ -13,7 +13,7 @@
 version: 1
 metadata:
   content_hash:
-    linux-64: b0dafc4dd7de1d31029a91bb0fd12d2646c7a4fdf4774abedf69496cd600afdb
+    linux-64: f5dcaac6acfdd44c13aea329badbba948711c5bc5d116b0e40a1303ff6ff3a5e
   channels:
   - url: conda-forge
     used_env_vars: []
@@ -331,19 +331,6 @@ package:
   hash:
     md5: 3bf7b9fd5a7136126e0234db4b87c8b6
     sha256: aac402a8298f0c0cc528664249170372ef6b37ac39fdc92b40601a6aed1e32ff
-  category: main
-  optional: false
-- name: google-cloud-sdk
-  version: 564.0.0
-  manager: conda
-  platform: linux-64
-  dependencies:
-    python: '>=3.10,<3.11.0a0'
-    python_abi: 3.10.*
-  url: https://conda.anaconda.org/conda-forge/linux-64/google-cloud-sdk-564.0.0-py310hff52083_0.conda
-  hash:
-    md5: 3fae69fbbb6ad1c8622e23661513b553
-    sha256: 07564c0e15ba662c9e8ccd5bc5739df8e472b13b42a1d77f5db1fd4f99663ad4
   category: main
   optional: false
 - name: graphite2

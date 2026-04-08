@@ -186,10 +186,54 @@ gcloud batch jobs submit gatk-job6 \
   --config=job.json
 
 # New errors! (gcloud.storage.cp) The following URLs matched no objects or files: gs://gatk-resource-bucket/data/SRR12023503_*.fastq.gz
-# FutureWarning: You are using a Python version (3.10.14) which Google will stop supporting
+# FutureWarning: You are using a Python version (3.10.14) which Google will stop supporting...
 
-# There is no data folder in the bucket
+# There is no data folder in the bucket - changed the script to match the correct url
 # Not sure where the really old python version is coming in...maybe the mamba image?
+```
 
-# Good stopping place for the day - tomorrow re-build image with correct path name, update job.json with image, then sumbit job
+```bash
+# micromamba does not have a python dependency and does not contain python https://micromamba-docker.readthedocs.io/en/latest/quick_start.html
+# I'll add python in the environment since google cloud is looking for it
+# Also changed the environment name to "base" per the micromamba docs
+
+conda-lock -f environment.yaml -p linux-64
+# python version does not work with lock file - docker build installs python 3.14.4 - removing python from environment
+
+# Credits are down to $296.30 today - something has cost a few cents in the past two days
+
+# New day - new docker instance. Re-run auth, set project, cd
+docker run -it --rm \
+    -v /workspaces/GATK-Variant-Calling-Pipeline/cloud-gatk:/app/ \
+    gcr.io/google.com/cloudsdktool/google-cloud-cli:slim
+
+# Inside the container login and set the project
+gcloud auth login
+
+gcloud config set project gatk-resources-490700
+
+cd /app
+
+gcloud builds submit --tag gcr.io/gatk-resources-490700/gatk-pipeline:v2.4
+
+gcloud batch jobs submit gatk-job7 \
+  --location=us-west1 \
+  --config=job.json
+
+# There are so many error messages (many with the error "") that it is hard to tell the problem. It seems the gcloud needs a component maybe?
+# This command requires the `gcloud-crc32c` component to be installed. Would you like to install the `gcloud-crc32c` component to continue command execution? (Y/n)?
+# I've also been looking at the logs wrong - oldest messages are at the top - everything makes more sense now
+
+# Added google cloud sdk and crc32c download to the Dockerfile and removed sdk from the environment
+# https://docs.cloud.google.com/sdk/docs/install-sdk#deb
+
+# In a new terminal
+conda-lock -f environment.yaml -p linux-64
+
+# In docker container
+gcloud builds submit --tag gcr.io/gatk-resources-490700/gatk-pipeline:v2.5
+
+gcloud batch jobs submit gatk-job8 \
+  --location=us-west1 \
+  --config=job.json
 ```

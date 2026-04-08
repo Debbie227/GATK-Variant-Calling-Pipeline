@@ -25,6 +25,14 @@ RUN micromamba run -n base conda-lock install \
 # Activate environment by default
 ENV PATH=/opt/conda/envs/$ENV_NAME/bin:$PATH
 
+# Install Google Cloud SDK and crc32c component
+RUN apt-get update && apt-get install -y curl gnupg lsb-release && \
+    echo "deb https://packages.cloud.google.com/apt cloud-sdk main" | tee /etc/apt/sources.list.d/google-cloud-sdk.list && \
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
+    apt-get update && apt-get install -y google-cloud-sdk && \
+    gcloud components install crc32c --quiet && \
+    apt-get clean
+
 # Set working directory
 WORKDIR /workspace
 
