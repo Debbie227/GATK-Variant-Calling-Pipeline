@@ -233,6 +233,9 @@ conda-lock -f environment.yaml -p linux-64
 # In docker container
 gcloud builds submit --tag gcr.io/gatk-resources-490700/gatk-pipeline:v2.5
 
+# Build failed - List directory /var/lib/apt/lists/partial is missing. - Acquire (13: Permission denied)
+# Removed sdk install from dockerfile and added back to environment along with crc32c
+
 gcloud batch jobs submit gatk-job8 \
   --location=us-west1 \
   --config=job.json
