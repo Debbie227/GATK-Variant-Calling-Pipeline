@@ -335,4 +335,16 @@ gcloud builds submit --tag gcr.io/gatk-resources-490700/gatk-pipeline:v2.8
 gcloud batch jobs submit gatk-job14 \
   --location=us-west1 \
   --config=job.json
+
+# Job succeded! 
+# redirecting stdout did not stop the errors from being logged in google cloud
+# results folder does not have sample number - fix at some point
+# Results folder has copy of original fastq files - do not need two copies in one bucket - fix at some point
+
+# Alignment 99.99% mapped - 95.77% matched pairs - 0.01% singletons
+
+# Still need to add: VSQR, Functional annotation, variant statistics
+# Creating separate shell script to test next set of commands
+
+# Next steps: double check shell script, download vcf from google bucket, get docker container with GATK, run vcf pipeline script
 ```
