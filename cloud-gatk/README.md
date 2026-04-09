@@ -286,4 +286,53 @@ gcloud builds submit --tag gcr.io/gatk-resources-490700/gatk-pipeline:v2.7
 gcloud batch jobs submit gatk-job11 \
   --location=us-west1 \
   --config=job.json
+
+# Error "This Spot VM is preempted. All unfinished tasks will be marked as failed with Batch exit code 50001."
+# BWA failed at constructing the SA file due to the cheap vm no longer being available
+
+gcloud batch jobs submit gatk-job12 \
+  --location=us-west1 \
+  --config=job.json
+
+# Pipeline ran for 2 hours 3 min - failed mid BWA-MEM with no error code - alignment ran from 18:48 - 19:08 - local bwa-mem ran for 5 hours
+# I guess I'll try it again, but it's concerning that it's failed twice before finishing an alignment
+# Added one retry to the json file
+
+gcloud batch jobs submit gatk-job13 \
+  --location=us-west1 \
+  --config=job.json
+
+# cpu utilization for indexing is 12% - reserved cpus 8 cpu usage 1
+
+# fastq utils posts thousands of messages - look for quiet mode? - not thousands....over 18.5 million error messages on the log
+# quiet mode doesn't exist - manually redirect stdout next update using: command > /dev/null
+# cpu went up to 36% - reserved cpus usage to 3
+
+# bwa-mem cpu utilization 29% - cpu usage 3
+# memory usage jumped to 73% in 3 min - 97% 6 cpu usage - leveled off at 99% 8cpu max usage
+# memory usage may be the reson the previous run failed. Lower the threads used or increase vm power? - Will see in the morning if the job runs.
+
+# Error samtools depth: Data is not position sorted
+# Had alignment check before index and sort
+# Fixed order of commands and added stdout redirect to pipeline
+
+# runtime 3 hours 40min - credit at $295.13
+```
+
+```bash
+docker run -it --rm \
+    -v /workspaces/GATK-Variant-Calling-Pipeline/cloud-gatk:/app/ \
+    gcr.io/google.com/cloudsdktool/google-cloud-cli:slim
+
+gcloud auth login
+
+gcloud config set project gatk-resources-490700
+
+cd /app
+
+gcloud builds submit --tag gcr.io/gatk-resources-490700/gatk-pipeline:v2.8
+
+gcloud batch jobs submit gatk-job14 \
+  --location=us-west1 \
+  --config=job.json
 ```

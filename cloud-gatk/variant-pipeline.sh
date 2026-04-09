@@ -24,7 +24,8 @@ echo "Matching paired reads..."
 fastq_filterpair \
   ${SAMPLE}_1.fastq.gz ${SAMPLE}_2.fastq.gz \
   match_${SAMPLE}_1.fastq.gz match_${SAMPLE}_2.fastq.gz \
-  ${SAMPLE}_single.fastq.gz
+  ${SAMPLE}_single.fastq.gz \
+  > /dev/null
 
 echo "Running FastQC..."
 fastqc match_${SAMPLE}_*.fastq.gz
@@ -43,13 +44,13 @@ bwa mem -t 8 \
   match_${SAMPLE}_1_val_1.fq.gz match_${SAMPLE}_2_val_2.fq.gz \
   > ${SAMPLE}.sam
 
-echo "Performing alignment check..."
-samtools flagstat ${SAMPLE}.sam > ${SAMPLE}.align_stats.txt
-samtools depth ${SAMPLE}.sam > ${SAMPLE}.depth.txt
-
 echo "Sorting BAM..."
 samtools sort ${SAMPLE}.sam -o ${SAMPLE}.bam
 samtools index ${SAMPLE}.bam
+
+echo "Performing alignment check..."
+samtools flagstat ${SAMPLE}.bam > ${SAMPLE}.align_stats.txt
+samtools depth ${SAMPLE}.bam > ${SAMPLE}.depth.txt
 
 echo "Marking duplicates..."
 gatk MarkDuplicates \
