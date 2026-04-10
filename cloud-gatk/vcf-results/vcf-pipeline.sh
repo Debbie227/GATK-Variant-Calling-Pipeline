@@ -5,20 +5,20 @@ set -euo pipefail
 SAMPLE=SRR12023503
 REFERENCE=gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.fasta
 
+echo "Indexing VCF"
+gatk IndexFeatureFile \
+    -I ${SAMPLE}.vcf.gz
+
 echo "Recalibrating SNPs..."
 gatk VariantRecalibrator \
     -R ${REFERENCE} \
     -V ${SAMPLE}.vcf.gz \
-    --resource:hapmap,known=false,training=true,truth=true,prior=15.0 \
-        gs://gcp-public-data--broad-references/hg38/v0/hapmap_3.3.hg38.vcf.gz \     # Highest quality training set
-    --resource:omni,known=false,training=true,truth=false,prior=12.0 \
-        gs://gcp-public-data--broad-references/hg38/v0/1000G_omni2.5.hg38.vcf.gz \  # High quality, slightly lower confidence
-    --resource:1000G,known=false,training=true,truth=false,prior=10.0 \
-        gs://gcp-public-data--broad-references/hg38/v0/1000G_phase1.snps.high_confidence.hg38.vcf.gz \  # Large training set
-    --resource:dbsnp,known=true,training=false,truth=false,prior=2.0 \
-        gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf.gz \  # Known variants (not for training)
-    -an QD -an MQ -an MQRankSum -an ReadPosRankSum -an FS -an SOR \  # Variant annotations to use
-    -mode SNP \             # Process SNPs only
+    --resource:hapmap,known=false,training=true,truth=true,prior=15.0 gs://gcp-public-data--broad-references/hg38/v0/hapmap_3.3.hg38.vcf.gz \
+    --resource:omni,known=false,training=true,truth=false,prior=12.0 gs://gcp-public-data--broad-references/hg38/v0/1000G_omni2.5.hg38.vcf.gz \
+    --resource:1000G,known=false,training=true,truth=false,prior=10.0 gs://gcp-public-data--broad-references/hg38/v0/1000G_phase1.snps.high_confidence.hg38.vcf.gz \
+    --resource:dbsnp,known=true,training=false,truth=false,prior=2.0 gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf.gz \
+    -an QD -an MQ -an MQRankSum -an ReadPosRankSum -an FS -an SOR \
+    -mode SNP \
     -O ${SAMPLE}_snps.recal \
     --tranches-file ${SAMPLE}_snps.tranches
  
@@ -28,17 +28,15 @@ gatk VariantRecalibrator \
     --recal-file ${SAMPLE}_snps.recal \
     --tranches-file ${SAMPLE}_snps.tranches \
     -mode SNP \
-    --truth-sensitivity-filter-level 99.0 \  # Keep 99% of true variants (high sensitivity)
+    --truth-sensitivity-filter-level 99.0 \
     -O ${SAMPLE}_snps_recalibrated.vcf.gz
 
 echo "Recalibrating Indels..."
 gatk VariantRecalibrator \
     -R ${REFERENCE} \
     -V ${SAMPLE}_snps_recalibrated.vcf.gz \
-    --resource:mills,known=false,training=true,truth=true,prior=12.0 \
-        gs://gcp-public-data--broad-references/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz \  # High-quality indels
-    --resource:dbsnp,known=true,training=false,truth=false,prior=2.0 \
-        gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf.gz \
+    --resource:mills,known=false,training=true,truth=true,prior=12.0 gs://gcp-public-data--broad-references/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz \  # High-quality indels
+    --resource:dbsnp,known=true,training=false,truth=false,prior=2.0 gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf.gz \  # Known variants (not for training)
     -an QD -an ReadPosRankSum -an FS -an SOR \  # Fewer annotations for indels
     -mode INDEL \
     --max-gaussians 4 \

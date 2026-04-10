@@ -373,12 +373,57 @@ chmod +x vcf-pipeline.sh
 
 # Use broad institutes gatk docker image - should have all dependancies 
 docker run -it --rm \
-    -v /workspaces/GATK-Variant-Calling-Pipeline/cloud-gatk/vcf-results:/data/ \
+    -v /workspaces/GATK-Variant-Calling-Pipeline/cloud-gatk/vcf-results:/app/data \
     broadinstitute/gatk:4.6.2.0
 
 # Ran out of space in codespaces just downloading the image
 # Deleting pixi folder to make room
 # Now there is 10k+ git changes...Going to open a new copdespace and re-run these commands
 
+# cannot find mounted drive
+ls
+# this image opens under the folder gatk not under app or root
+# found shell script in /app/data folder
+
+# back to gatk
+
+/app/data/vcf-pipeline.sh
+
+# Variant recalibrator error: A USER ERROR has occurred: Illegal argument value: Positional arguments were provided ', }' but no positional argument is defined for this tool.
+# Changed formatting https://gatk.broadinstitute.org/hc/en-us/articles/360036510892-VariantRecalibrator
+
+# A USER ERROR has occurred: Illegal argument value: Positional arguments were provided ', }' but no positional argument is defined for this tool.
+# A USER ERROR has occurred: Argument output was missing: Argument 'output' is required
+# Removed : after resource
+
+# A USER ERROR has occurred: Argument resource has a bad value: hapmap,known=false,training=true,truth=true,prior=15.0:gs://gcp-public-data--broad-references/hg38/v0/hapmap_3.3.hg38.vcf.gz. Failure constructing 'FeatureInput' from the string 'hapmap,known=false,training=true,truth=true,prior=15.0:gs://gcp-public-data--broad-references/hg38/v0/hapmap_3.3.hg38.vcf.gz'.
+
+# Tried to change just HAPMAP gs:// resource to a variable to see if it will work
+# Same error - Error is not on reference though?
+# After trying a ton of different methods with different spaces and colons and using variables I got a new error!
+# /app/data/vcf-pipeline.sh: line 9: 1000G=gs://gcp-public-data--broad-references/hg38/v0/1000G_phase1.snps.high_confidence.hg38.vcf.gz: No such file or directory
+# back to Illegal argument value...
+# Using two colons gives - A USER ERROR has occurred: No argument value found for tagged argument: resource:hapmap,known=false,training=true,truth=true,prior=15.0:gs://gcp-public-data--broad-references/hg38/v0/hapmap_3.3.hg38.vcf.gz
+# I don't think the gs:// is going to work
+
+# No colons - A USER ERROR has occurred: Illegal argument value: Positional arguments were provided ',gs://gcp-public-data--broad-references/hg38/v0/hapmap_3.3.hg38.vcf.gz{gs://gcp-public-data--broad-references/hg38/v0/1000G_omni2.5.hg38.vcf.gz{gs://gcp-public-data--broad-references/hg38/v0/1000G_phase1.snps.high_confidence.hg38.vcf.gz{gs://gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf.gz{ }' but no positional argument is defined for this tool.
+
+# Used wget to download files
+# Copied code exactly from broadinstitute.org
+
+# Files has slightly different names - fixed 
+
 ./vcf-pipeline.sh
+
+# New error! - A USER ERROR has occurred: An index is required but was not found for file hapmap:/app/data/hapmap_3.3.hg38.vcf.gz. Support for unindexed block-compressed files has been temporarily disabled. Try running IndexFeatureFile on the input.
+# Need the index files also...
+
+# After I thought I tried everything I re-put in the gs:// and it worked...
+
+# Added indexing to vcf
+
+# Made it through indexing and variant recal!
+# Now same annoying error with VSQR - A USER ERROR has occurred: Illegal argument value: Positional arguments were provided ', }' but no positional argument is defined for this tool.
+
+# I DO NOT KNOW WHAT IS CAUSING IT
 ```
