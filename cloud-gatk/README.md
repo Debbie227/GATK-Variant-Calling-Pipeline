@@ -348,3 +348,37 @@ gcloud batch jobs submit gatk-job14 \
 
 # Next steps: double check shell script, download vcf from google bucket, get docker container with GATK, run vcf pipeline script
 ```
+
+```bash
+# Get vcf from variant-pipeline
+ mkdir cloud-gatk/vcf-results
+ cd cloud-gatk/vcf-results/
+
+docker run -it --rm \
+    -v /workspaces/GATK-Variant-Calling-Pipeline/cloud-gatk/vcf-results:/app/ \
+    gcr.io/google.com/cloudsdktool/google-cloud-cli:slim
+
+gcloud auth login
+
+cd /app
+
+gcloud storage cp gs://gatk-resource-bucket/results/SRR12023503.vcf.gz .
+
+exit
+
+# Moved vcf pipeline to vcf-results folder to make things easier
+
+# Make sure shell script has executable permissions
+chmod +x vcf-pipeline.sh
+
+# Use broad institutes gatk docker image - should have all dependancies 
+docker run -it --rm \
+    -v /workspaces/GATK-Variant-Calling-Pipeline/cloud-gatk/vcf-results:/data/ \
+    broadinstitute/gatk:4.6.2.0
+
+# Ran out of space in codespaces just downloading the image
+# Deleting pixi folder to make room
+# Now there is 10k+ git changes...
+
+./vcf-pipeline.sh
+```
