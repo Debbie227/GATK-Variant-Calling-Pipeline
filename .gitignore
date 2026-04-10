@@ -13,3 +13,4 @@
 *.pac
 *.bwt
 *.sa
+cloud-gatk/vcf-results/

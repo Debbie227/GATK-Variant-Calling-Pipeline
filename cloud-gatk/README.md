@@ -426,4 +426,67 @@ ls
 # Now same annoying error with VSQR - A USER ERROR has occurred: Illegal argument value: Positional arguments were provided ', }' but no positional argument is defined for this tool.
 
 # I DO NOT KNOW WHAT IS CAUSING IT
+
+# Copying and pasting from the gatk website worked and now the next command has the error...will copy paste all remaining commands
+
+# ./vcf-pipeline.sh: line 56: snpEff: command not found
+# I wasn't sure if it'd be in the docker container or not
+
+conda install bioconda::snpeff
+# Collecting package metadata (repodata.json): | Terminated
+# Newest version unsupported by linux64 - last supported version 4.3.1t
+conda install bioconda::snpeff:4.3.1t
+# Collecting package metadata (repodata.json): | Terminated
+
+# For now I'll run snpEff in a separate docker container
+# New terminal
+
+docker run -it --rm \
+  -v /workspaces/GATK-Variant-Calling-Pipeline/cloud-gatk/vcf-results:/app/ \
+  staphb/snpeff:5.2f
+
+# does not run interactively - kicks me out of the container after displaying some information
+
+# This one hasn't been updated in 7 years but it works
+# Open in the data folder - not in app
+docker run -it --rm \
+  -v /workspaces/GATK-Variant-Calling-Pipeline/cloud-gatk/vcf-results:/data \
+  biocontainers/snpeff:v4.1k_cv3
+
+snpEff ann \
+    -Xmx32g \
+    -stats SRR12023503_annotation_stats.html \
+    GRCh38.105 \
+    SRR12023503_filtered.vcf.gz \
+    > SRR12023503_annotated.vcf
+
+# java.lang.RuntimeException: Property: 'GRCh38.105.genome' not found
+
+snpEff ann \
+    -Xmx32g \
+    -stats SRR12023503_annotation_stats.html \
+    GRCh38 \
+    SRR12023503_filtered.vcf.gz \
+    > SRR12023503_annotated.vcf
+
+# java.lang.RuntimeException:     ERROR: Cannot read file '/home/biodocker/bin/snpEff/./data/GRCh38/snpEffectPredictor.bin'. You can try to download the database by running the following command: java -jar snpEff.jar download GRCh38
+
+java -jar snpEff.jar download GRCh38
+
+# Error: Unable to access jarfile snpEff.jar
+# No documentation on this super old docker container...
+
+# GATK container - lets finish the pipeline minus the annotation
+bcftools stats SRR12023503_filtered.vcf.gz > SRR12023503_variant_stats.txt
+
+# number of SNPs:	66013
+# number of indels:	13227
+
+bcftools view -v snps SRR12023503_filtered.vcf.gz | bcftools query -f '.\n' | wc -l > SRR12023503_snp_count.txt
+
+bcftools view -v indels SRR12023503_filtered.vcf.gz | bcftools query -f '.\n' | wc -l > SRR12023503_indel_count.txt
+
+# These are both in the stats file...not sure why we need separate text files with a single number
+
+
 ```
