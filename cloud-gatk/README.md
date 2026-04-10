@@ -378,7 +378,7 @@ docker run -it --rm \
 
 # Ran out of space in codespaces just downloading the image
 # Deleting pixi folder to make room
-# Now there is 10k+ git changes...
+# Now there is 10k+ git changes...Going to open a new copdespace and re-run these commands
 
 ./vcf-pipeline.sh
 ```
