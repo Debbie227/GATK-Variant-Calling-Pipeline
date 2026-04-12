@@ -21,7 +21,47 @@ process DOWNLOAD_FASTQ {
     """
 }
 
-process TRIM_QC {
+process FILTER_FASTQ {
+    input:
+    tuple val(sample), path(r1), path(r2)
+
+    output:
+    tuple val(sample), 
+        path("$match_${sample}_1.fastq.gz"), 
+        path("$match_${sample}_2.fastq.gz")
+
+    script:
+    """
+    fastq_filterpair \
+        $r1 $r2 \
+        match_${sample}_1.fastq.gz match_${sample}_2.fastq.gz \
+        ${sample}_single.fastq.gz
+    """
+}
+
+process FASTQC {
+
+    publishDir "gs://gatk-resource-bucket/nextflow-results/", 
+                mode: 'copy'
+                pattern: "*.{html,zip}"
+
+    input:
+    tuple val(sample), 
+    path(r1), 
+    path(r2)
+
+    output:
+    tuple val(sample), 
+    path(r1), 
+    path(r2)
+
+    script:
+    """
+    fastqc $r1 $r2
+    """
+}
+
+process TRIM {
     input:
     tuple val(sample), path(r1), path(r2)
 
@@ -32,8 +72,6 @@ process TRIM_QC {
 
     script:
     """
-    fastqc $r1 $r2
-
     trim_galore --paired --quality 20 --length 50 $r1 $r2
     """
 }
