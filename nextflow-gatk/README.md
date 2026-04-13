@@ -6,6 +6,7 @@
 
 ```bash
 # Started writing Nextflow workflow
+
 # Next steps test mini pipeline
 # - Add workflow to the bottom of the pipeline (like calling the defined functions called DAG)
 # - Use nextflow container nextflow/nextflow:26.03.2-edge
@@ -58,7 +59,9 @@ nextflow run main.nf \
 # The config file created via gpt is completely wrong - https://seqera.io/blog/nextflow-with-gbatch/
 # https://docs.seqera.io/nextflow/reference/config#google
 # changed 'region' to 'location'
-# Added container
+# Added container - This pipeline is using the container uploaded to Google through the cloud gatk workflow
+# Container will have to be updated to include snpEff
+
 # Removed machine specs - each process is a different VM? - process cpus and memory can be added in the script section after command: --cpus $task.cpus --mem $task.memory
 # https://docs.seqera.io/nextflow/process#outputs
 
@@ -77,6 +80,7 @@ nextflow run main.nf -preview -with-dag
 
 # Error main.nf:34:15: `match_` is not defined
 # Removed extra $
+
 # Error main.nf:8:1: `samples` is not defined
 # Why does this not catch errors in order??
 # Removed samples - wasn't sure why it was there but it autopopulated when typing
@@ -110,10 +114,10 @@ docker run -it --rm \
 cd app
 nextflow run main.nf -preview -config nextflow.config
 # Invalid or corrupted Google credentials file: /root/.config/gcloud/application_default_credentials.json
-# Nothing in the "root" folder
+# Nothing found in the "root" folder
 # Need to make a docker compose to mount the credentials properly like I did in the engineering camp
 
-# Created compose file
+# Created docker compose file
 
 docker compose run --rm nextflow
 # No folders in the container at all?
@@ -135,4 +139,10 @@ nextflow run /workspace/main.nf \
 
 # Google batch shows a scheduled job!
 # Credits remaining - $294.26
+
+# Nextflow submits only one step at a time - there is no queue on Google Batch. This means that Nextflow must stay open to continue to a new step.
+# I can leave the job to run and log back in at another time to start step 2 with the -resume flag
+
+# Task is running with 1.95GB memory and 1vCPU
+# Should look at last pipeline to determine what steps need more memory and CPUs
 ```
