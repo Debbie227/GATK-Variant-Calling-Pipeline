@@ -1,14 +1,18 @@
 #!/usr/bin/env nextflow
 
-params.sample = params.sample ?: "SRR12023503"
 
-Channel
-    .of(params.sample)
-    .set { samples }
+workflow {
+
+    reads_ch = Channel.of(params.sample)
+
+    reads_ch | DOWNLOAD_FASTQ | FILTER_FASTQ | FASTQC | TRIM
+
+}
+
 
 process DOWNLOAD_FASTQ {
     input:
-    val sample from samples
+    val sample
 
     output:
     tuple val(sample), 
@@ -27,8 +31,8 @@ process FILTER_FASTQ {
 
     output:
     tuple val(sample), 
-        path("$match_${sample}_1.fastq.gz"), 
-        path("$match_${sample}_2.fastq.gz")
+        path("match_${sample}_1.fastq.gz"), 
+        path("match_${sample}_2.fastq.gz")
 
     script:
     """
@@ -41,8 +45,8 @@ process FILTER_FASTQ {
 
 process FASTQC {
 
-    publishDir "gs://gatk-resource-bucket/nextflow-results/", 
-                mode: 'copy'
+    publishDir 'gs://gatk-resource-bucket/nextflow-results/', 
+                mode: 'copy',
                 pattern: "*.{html,zip}"
 
     input:
