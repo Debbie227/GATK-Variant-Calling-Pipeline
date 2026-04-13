@@ -1,0 +1,9 @@
+services:
+  nextflow:
+    image: nextflow/nextflow:26.03.2-edge
+    volumes:
+      - .:/workspace
+      - ./gcp-creds:/root/.config/gcloud:ro
+    working_dir: /workspace/nextflow-gatk
+    entrypoint: [/bin/bash]
+    

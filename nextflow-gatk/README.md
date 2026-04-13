@@ -91,4 +91,48 @@ nextflow run main.nf -preview -config nextflow.config
 # Yay! the error is now: Your default credentials were not found. To set up Application Default Credentials for your environment...
 
 # I knew this would be coming since I haven't set up the credentials yet
+# Lets create auth credentials using a docker container and mount them to the nextflow container
+
+# New terminal
+alias gcloud-docker="docker run -it --rm -v ${PWD}/gcp-creds:/root/.config/gcloud gcr.io/google.com/cloudsdktool/google-cloud-cli:slim"
+gcloud-docker gcloud auth application-default login
+gcloud-docker gcloud auth application-default set-quota-project gatk-resources-490700
+# Added .nextflow* and gcp-creds to gitignore
+
+# Run the nextflow container with the working directory and the creds and tell the container where to look for creds
+docker run -it --rm \
+  -v /workspaces/GATK-Variant-Calling-Pipeline/nextflow-gatk:/app \
+  -v ~/.config/gcloud:/root/.config/gcloud \
+  -e GOOGLE_APPLICATION_CREDENTIALS=/root/.config/gcloud/application_default_credentials.json \
+  --entrypoint /bin/bash \
+  nextflow/nextflow:26.03.2-edge
+
+cd app
+nextflow run main.nf -preview -config nextflow.config
+# Invalid or corrupted Google credentials file: /root/.config/gcloud/application_default_credentials.json
+# Nothing in the "root" folder
+# Need to make a docker compose to mount the credentials properly like I did in the engineering camp
+
+# Created compose file
+
+docker compose run --rm nextflow
+# No folders in the container at all?
+nextflow run /workspace/main.nf -preview -config /workspace/nextflow.config
+
+# Looks like it worked? Not sure why I can't ls the folder system but there is now progress bars on the 4 processes.
+# I guess it's time to run them! - Since I can't troubleshoot files anyway maybe I'll make docker compose run just do the command later
+
+nextflow run /workspace/main.nf \
+    -config /workspace/nextflow.config \
+    -work-dir gs://gatk-resource-bucket/work \
+    -resume
+
+# executor >  google-batch (1)
+# [5c/c9477b] DOWNLOAD_FASTQ (1) [  0%] 0 of 1
+# [-        ] FILTER_FASTQ       -
+# [-        ] FASTQC             -
+# [-        ] TRIM               -
+
+# Google batch shows a scheduled job!
+# Credits remaining - $294.26
 ```
