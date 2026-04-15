@@ -186,3 +186,14 @@ nextflow run /workspace/main.nf \
 
 # Need to figure out how I can have the reads, genome, and index files all in the same place to run bwa mem
 ```
+
+```bash
+# Created gatk.nf to work around the alignment issues and see if the nextflow syntax is correct as well as see where files are stored in the cloud
+
+docker compose run --rm nextflow
+
+nextflow run /workspace/gatk.nf -preview -config /workspace/nextflow.config
+#WARN: Unrecognized config option 'google.batch.volumes'
+
+# Deleted volumes
+```
