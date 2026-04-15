@@ -11,6 +11,9 @@ workflow {
 
 
 process DOWNLOAD_FASTQ {
+
+    label 'small_mem'
+
     input:
     val sample
 
@@ -26,6 +29,9 @@ process DOWNLOAD_FASTQ {
 }
 
 process FILTER_FASTQ {
+
+    label 'small_mem'
+
     input:
     tuple val(sample), path(r1), path(r2)
 
@@ -44,6 +50,8 @@ process FILTER_FASTQ {
 }
 
 process FASTQC {
+
+    label 'small_mem'
 
     publishDir 'gs://gatk-resource-bucket/nextflow-results/', 
                 mode: 'copy',
@@ -66,6 +74,9 @@ process FASTQC {
 }
 
 process TRIM {
+
+    label 'small_mem'
+    
     input:
     tuple val(sample), path(r1), path(r2)
 

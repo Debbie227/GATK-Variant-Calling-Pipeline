@@ -145,4 +145,44 @@ nextflow run /workspace/main.nf \
 
 # Task is running with 1.95GB memory and 1vCPU
 # Should look at last pipeline to determine what steps need more memory and CPUs
+
+# Next steps - download reference genome, index, run alignment
+# Then - sam to bam and index and run alignment checks
+# Then GATK steps
+
+# Job submitted an hour ago and still hasn't begun - Going to have to close out of Nextflow and resume later
+
+# Google cloud machines https://docs.cloud.google.com/compute/docs/general-purpose-machines#n2_series
+# Label processes https://docs.seqera.io/nextflow/reference/process#label 
+
+# Still hasn't run 3.5 hours later - maybe I should try a different machine
+# Cancelled job
+# Added memory tags to processes
+
+docker compose run --rm nextflow
+
+nextflow run /workspace/main.nf \
+    -config /workspace/nextflow.config \
+    -work-dir gs://gatk-resource-bucket/work \
+    -resume
+
+# Error nextflow.config:11:21: Unexpected input: ''n2-standard-4''
+# Removed machine type changed to cpus and mem
+
+# Job is scheduled with n2-standard-2 instead of being blank
+
+# Error on Nextflow-   /bin/bash: /mnt/disks/gatk-resource-bucket/work/63/85332466546cf87caed146014f17b3/.command.run: Permission denied
+# Error on Job - textPayload: "cp: cannot stat '.command.log': No such file or directory"
+
+# Needed to mount a bucket to save data between steps - This means all intermediate steps will be stored in the bucket unlike the shell pipeline which was performed on the VM
+# Added mount to nextflow.config
+
+nextflow run /workspace/main.nf \
+    -config /workspace/nextflow.config \
+    -work-dir gs://gatk-resource-bucket/work \
+    -resume
+
+# Same error
+
+# Need to figure out how I can have the reads, genome, and index files all in the same place to run bwa mem
 ```
