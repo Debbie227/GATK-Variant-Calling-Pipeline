@@ -194,6 +194,58 @@ docker compose run --rm nextflow
 
 nextflow run /workspace/gatk.nf -preview -config /workspace/nextflow.config
 #WARN: Unrecognized config option 'google.batch.volumes'
+# Error gatk.nf:18:9 `sample` is not defined + several other not defined errors
 
 # Deleted volumes
+# Fixed syntax - missing 'tuple' missing 'path'
+
+nextflow run /workspace/gatk.nf -preview -config /workspace/nextflow.config
+
+# [-        ] MARK_DUPLICATES -
+# [-        ] BQSR            -
+
+# Ready to try run
+nextflow run /workspace/gatk.nf \
+    -config /workspace/nextflow.config \
+    -work-dir gs://gatk-resource-bucket/work \
+    -resume
+
+#   Can't stage file https://storage.googleapis.com/gatk-resource-bucket/results/SRR12023503.bam -- reason: Unable to access path: https://storage.googleapis.com/gatk-resource-bucket/results/SRR12023503.bam
+
+# Changed to gs path instead of https
+
+# Still same error as last pipeline:
+#Command output:
+#  /bin/bash: /mnt/disks/gatk-resource-bucket/work/19/e8834f3154755399c4cedd0f0e01bc/.command.run: Permission denied
+#Command error:
+#  tee: .command.log: Permission deniedcp: cannot stat '.command.log': No such file or directory
+#Work dir:
+#  gs://gatk-resource-bucket/work/19/e8834f3154755399c4cedd0f0e01bc
+#Container:
+#  gcr.io/gatk-resources-490700/gatk-pipeline:v2.8
+
+# Google says Missing ps in Container: If you have enabled execution metrics (e.g., -with-report), Nextflow requires the ps command to be available inside the container. If it is missing, the wrapper script fails to write to .command.log, resulting in a "Permission denied" error.Fix: Either install procps in your container image or disable metrics generation in your Nextflow configuration.
+
+# Disabled trace, report, and timeline
+# Can later update conda to Install procps-ng
+
+nextflow run /workspace/gatk.nf \
+    -config /workspace/nextflow.config \
+    -work-dir gs://gatk-resource-bucket/work \
+    -resume
+
+# WARN: Cannot determine the machine type to be used for task: `MARK_DUPLICATES (1)` - If this problem persists disable disable the Cloudinfo service by setting the variable NXF_CLOUDINFO_ENABLED=false in your environment
+
+# Still seems to have scheduled just fine? Machine type is e2-standard-2
+# Same error
+
+# Could be Nextflow version...Trying older nextflow image
+exit
+docker compose run --rm nextflow
+
+# Same error
+# added nf-google plugin to config
+# Same error
+# Added batch job editor and service account user permissions
+# Same error
 ```

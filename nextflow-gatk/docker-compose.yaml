@@ -1,6 +1,6 @@
 services:
   nextflow:
-    image: nextflow/nextflow:26.03.2-edge
+    image: nextflow/nextflow:25.10.4
     volumes:
       - .:/workspace
       - ./gcp-creds:/root/.config/gcloud:ro
