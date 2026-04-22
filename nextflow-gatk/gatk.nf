@@ -5,7 +5,7 @@ workflow {
 
     reads_ch = Channel.of([params.sample, params.bam])
 
-    reads_ch | MARK_DUPLICATES | BQSR
+    reads_ch | MARK_DUPLICATES | BQSR | VARIANT_CALL
 
 }
 
@@ -60,4 +60,24 @@ gatk ApplyBQSR \
   -O ${sample}_recal.bam \
   --create-output-bam-index true
   """
+}
+
+process VARIANT_CALL {
+
+    label 'big mem'
+
+    input:
+    tuple val(sample),
+    path(r1)
+
+    output:
+    tuple val(sample),
+    path("${sample}.vcf.gz")
+
+    script:
+    """
+    gatk HaplotypeCaller \
+  -R ${params.ref} \
+  -I $r1 \
+  -O ${sample}.vcf.gz
 }
