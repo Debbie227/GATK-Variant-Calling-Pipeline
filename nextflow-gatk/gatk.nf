@@ -64,7 +64,7 @@ gatk ApplyBQSR \
 
 process VARIANT_CALL {
 
-    label 'big mem'
+    label 'big_mem'
 
     input:
     tuple val(sample),
