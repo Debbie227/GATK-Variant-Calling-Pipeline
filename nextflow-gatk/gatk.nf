@@ -5,7 +5,7 @@ workflow {
 
     reads_ch = Channel.of([params.sample, params.bam])
 
-    reads_ch | MARK_DUPLICATES | BQSR | VARIANT_CALL
+    reads_ch | MARK_DUPLICATES | BQSR | VARIANT_CALL | RECAL_SNP
 
 }
 
@@ -80,4 +80,37 @@ process VARIANT_CALL {
   -R ${params.ref} \
   -I $r1 \
   -O ${sample}.vcf.gz
+}
+
+process RECAL_SNP {
+
+    label 'small_mem'
+
+    input:
+    tuple val(sample)
+    path(r1)
+
+    output:
+    tuple val(sample)
+    path(${sample}_snps.recal)
+    path(${sample}_snps.tranches)
+
+    script:
+    """
+    gatk VariantRecalibrator \
+    -R ${params.ref} \
+    -V $r1 \
+    --resource:hapmap,known=false,training=true,truth=true,prior=15.0 \
+        ${params.hapmap} \
+    --resource:omni,known=false,training=true,truth=false,prior=12.0 \
+        ${params.omni} \
+    --resource:1000G,known=false,training=true,truth=false,prior=10.0 \
+        ${params.g1000} \
+    --resource:dbsnp,known=true,training=false,truth=false,prior=2.0 \
+        ${params.dbsnp} \  # Known variants (not for training)
+    -an QD -an MQ -an MQRankSum -an ReadPosRankSum -an FS -an SOR \
+    -mode SNP \
+    -O ${sample}_snps.recal \
+    --tranches-file ${sample}_snps.tranches
+    """
 }
