@@ -5,7 +5,7 @@ workflow {
 
     reads_ch = Channel.of([params.sample, params.bam])
 
-    reads_ch | MARK_DUPLICATES | BQSR | VARIANT_CALL | RECAL_SNP | SNP_VQSR
+    reads_ch | MARK_DUPLICATES | BQSR | VARIANT_CALL | RECAL_SNP | SNP_VQSR | RECAL_INDEL | INDEL_VQSR
 
 }
 
@@ -108,7 +108,7 @@ process RECAL_SNP {
         --resource:1000G,known=false,training=true,truth=false,prior=10.0 \
             ${params.g1000} \
         --resource:dbsnp,known=true,training=false,truth=false,prior=2.0 \
-            ${params.dbsnp} \  # Known variants (not for training)
+            ${params.dbsnp} \
         -an QD -an MQ -an MQRankSum -an ReadPosRankSum -an FS -an SOR \
         -mode SNP \
         -O ${sample}_snps.recal \
@@ -138,5 +138,61 @@ process SNP_VQSR {
         -mode SNP \
         --truth-sensitivity-filter-level 99.0 \
         -O ${SAMPLE}_snps_recalibrated.vcf.gz
+    """
+}
+
+process RECAL_INDEL {
+
+    label 'small_mem'
+
+    input:
+    tuple val(sample)
+    path(r1)
+
+    output:
+    tuple val(sample)
+    path(${sample}.vcf.gz)
+    path(${sample}_indels.recal)
+    path(${sample}_indels.tranches)
+
+    script:
+    """
+    gatk VariantRecalibrator \
+        -R ${params.ref} \
+        -V $r1 \
+        --resource:mills,known=false,training=true,truth=true,prior=12.0 \
+            ${params.mills}
+        --resource:dbsnp,known=true,training=false,truth=false,prior=2.0 \
+            ${params.dbsnp} \
+        -an QD -an ReadPosRankSum -an FS -an SOR \
+        -mode INDEL \
+        --max-gaussians 4 \
+        -O ${sample}_snps.recal \
+        --tranches-file ${sample}_snps.tranches
+    """
+}
+
+process INDEL_VQSR {
+    label 'small_mem'
+
+    input:
+    tuple val(sample)
+    path(r1)
+    path(r2)
+
+    output:
+    tuple val(sample)
+    path(${sample}_filtered.vcf.gz
+
+    script:
+    """
+    gatk ApplyVQSR \
+        -R ${params.ref} \
+        -V $r1 \
+        --recal-file $r2 \
+        --tranches-file $r3 \
+        -mode INDEL \
+        --truth-sensitivity-filter-level 95.0 \
+        -O ${SAMPLE}_filtered.vcf.gz
     """
 }
