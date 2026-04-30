@@ -5,7 +5,7 @@ workflow {
 
     reads_ch = Channel.of([params.sample, params.bam])
 
-    reads_ch | MARK_DUPLICATES | BQSR | VARIANT_CALL | RECAL_SNP | SNP_VQSR | RECAL_INDEL | INDEL_VQSR
+    reads_ch | MARK_DUPLICATES | BQSR | VARIANT_CALL | RECAL_SNP | SNP_VQSR | RECAL_INDEL | INDEL_VQSR | SNPEFF
 
 }
 
@@ -87,13 +87,13 @@ process RECAL_SNP {
     label 'small_mem'
 
     input:
-    tuple val(sample)
+    tuple val(sample),
     path(r1)
 
     output:
-    tuple val(sample)
-    path(${sample}.vcf.gz)
-    path(${sample}_snps.recal)
+    tuple val(sample),
+    path(${sample}.vcf.gz),
+    path(${sample}_snps.recal),
     path(${sample}_snps.tranches)
 
     script:
@@ -120,12 +120,12 @@ process SNP_VQSR {
     label 'small_mem'
 
     input:
-    tuple val(sample)
-    path(r1)
+    tuple val(sample),
+    path(r1),
     path(r2)
 
     output:
-    tuple val(sample)
+    tuple val(sample),
     path(${sample}_snps_recalibrated.vcf.gz
 
     script:
@@ -146,13 +146,13 @@ process RECAL_INDEL {
     label 'small_mem'
 
     input:
-    tuple val(sample)
+    tuple val(sample),
     path(r1)
 
     output:
-    tuple val(sample)
-    path(${sample}.vcf.gz)
-    path(${sample}_indels.recal)
+    tuple val(sample),
+    path(${sample}.vcf.gz),
+    path(${sample}_indels.recal),
     path(${sample}_indels.tranches)
 
     script:
@@ -176,12 +176,12 @@ process INDEL_VQSR {
     label 'small_mem'
 
     input:
-    tuple val(sample)
-    path(r1)
+    tuple val(sample),
+    path(r1),
     path(r2)
 
     output:
-    tuple val(sample)
+    tuple val(sample),
     path(${sample}_filtered.vcf.gz
 
     script:
@@ -194,5 +194,27 @@ process INDEL_VQSR {
         -mode INDEL \
         --truth-sensitivity-filter-level 95.0 \
         -O ${SAMPLE}_filtered.vcf.gz
+    """
+}
+
+process SNPEFF {
+    label 'small_mem'
+
+    input:
+    tuple val,
+    path(r1)
+
+    output:
+    tuple val(sample),
+    path(${sample}_annotated.vcf
+
+    script:
+    """
+    snpEff ann \
+    -Xmx32g \
+    -stats ${SAMPLE}_annotation_stats.html \
+    GRCh38.105 \
+    $r1 \
+    > ${SAMPLE}_annotated.vcf
     """
 }
