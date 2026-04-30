@@ -249,3 +249,7 @@ docker compose run --rm nextflow
 # Added batch job editor and service account user permissions
 # Same error
 ```
+```bash
+# No bash commands due to running out of space on codespaces again.
+# Continued gatk nextflow workflow via github editor
+```
