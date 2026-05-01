@@ -253,3 +253,17 @@ docker compose run --rm nextflow
 # No bash commands due to running out of space on codespaces again.
 # Continued gatk nextflow workflow via github editor
 ```
+```bash
+# Back in buisness with codespaces, but Google Cloud trial has now run out.
+# Time to leave codespaces due to ram/storage limits and run locally
+
+# To do List:
+# finish nextflow pipeline
+# Install new HDD that has been sitting around
+# Install WSL2
+# Install Docker desktop
+# Install Nextflow
+# Install Git and JDK if needed?
+# Update config to run locally with storage on new drive
+# Maybe compare gatk workflow with deepvariant to see if it picks up more variants?
+```
