@@ -5,7 +5,7 @@ workflow {
 
     reads_ch = Channel.of([params.sample, params.bam])
 
-    reads_ch | MARK_DUPLICATES | BQSR | VARIANT_CALL | RECAL_SNP | SNP_VQSR | RECAL_INDEL | INDEL_VQSR | SNPEFF
+    reads_ch | MARK_DUPLICATES | BQSR | VARIANT_CALL | RECAL_SNP | SNP_VQSR | RECAL_INDEL | INDEL_VQSR | SNPEFF | VARIANT_TABLE | VARIANT_STATS
 
 }
 
@@ -80,6 +80,7 @@ process VARIANT_CALL {
       -R ${params.ref} \
       -I $r1 \
       -O ${sample}.vcf.gz
+    """
 }
 
 process RECAL_SNP {
@@ -182,7 +183,7 @@ process INDEL_VQSR {
 
     output:
     tuple val(sample),
-    path(${sample}_filtered.vcf.gz
+    path(${sample}_filtered.vcf.gz)
 
     script:
     """
@@ -206,7 +207,7 @@ process SNPEFF {
 
     output:
     tuple val(sample),
-    path(${sample}_annotated.vcf
+    path(${sample}_annotated.vcf)
 
     script:
     """
@@ -216,5 +217,43 @@ process SNPEFF {
     GRCh38.105 \
     $r1 \
     > ${SAMPLE}_annotated.vcf
+    """
+}
+
+process VARIANT_TABLE {
+    label 'small_mem'
+
+    input:
+    tuple val(sample),
+    path(r1)
+
+    output:
+    tuple val(sample),
+    path(${sample}_variants.tsv)
+
+    script:
+    """
+    gatk VariantsToTable \
+        -R ${params.ref} \
+        -V $r1 \
+        -F CHROM -F POS -F REF -F ALT -F QUAL -F ANN \
+        -O ${sample}_variants.tsv
+    """
+}
+
+process VARIANT_STATS {
+    label 'small_mem'
+
+    input:
+    tuple val(sample),
+    path(r1)
+
+    output:
+    tuple val(sample),
+    path(${sample}_variant_stats.txt)
+
+    script:
+    """
+    bftools stats $r1 > ${sample}_variant_stats.txt
     """
 }
